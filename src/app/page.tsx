@@ -20,7 +20,7 @@ export default function Home() {
             <div className="w-full h-full flex items-center justify-center">
               <div className="relative w-full max-w-4xl aspect-[3/2]">
                 <Image 
-                  src="/ChatGPT Image Jan 8, 2026, 02_46_47 PM.png"
+                  src="/hero-image.png"
                   alt="3D Model Management Hero"
                   fill
                   className="object-contain"
