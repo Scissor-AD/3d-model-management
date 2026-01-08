@@ -61,10 +61,10 @@ export default function ControlBar() {
 
       <div className={`control-bar ${isExpanded ? 'expanded' : 'collapsed'}`}>
         {/* Mobile Drag Handle */}
-        <div className="md:hidden flex justify-center py-2">
+        <div className="md:hidden flex justify-center pt-3 pb-1">
           <button 
             onClick={toggleExpand}
-            className="w-10 h-1 bg-[var(--muted)] rounded-full opacity-50"
+            className="w-12 h-1.5 bg-[var(--muted)] rounded-full opacity-40"
             aria-label="Toggle control bar"
           />
         </div>
@@ -94,7 +94,7 @@ export default function ControlBar() {
           {/* Mobile: Simple toggle */}
           <button
             onClick={toggleExpand}
-            className="md:hidden flex-1 flex items-center justify-between px-4 py-3"
+            className="md:hidden flex-1 flex items-center justify-between px-4 py-2"
           >
             <span className="font-display text-sm font-bold">REQUEST INFORMATION</span>
             <span className="text-xl">{isExpanded ? '−' : '+'}</span>
@@ -104,81 +104,75 @@ export default function ControlBar() {
         {/* Expanded Content */}
         {isExpanded && (
           <div className="flex flex-col md:flex-row h-[calc(100%-60px)] md:h-[calc(100%-50px)] overflow-hidden">
-            {/* Left Sections - Hidden on mobile collapsed, shown in tabs on mobile expanded */}
-            <div className="flex flex-col md:flex-row md:flex-[3] border-b md:border-b-0 border-[var(--border)]">
-              {/* INFO Section */}
-              <div className="flex-1 border-r border-[var(--border)] p-4 overflow-y-auto">
-                <h3 className="font-display text-sm font-bold mb-4 md:hidden">INFO</h3>
-                <nav className="space-y-2">
-                  {infoLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      className="block font-body text-sm hover:text-[var(--muted)] transition-colors"
+            {/* INFO Section - Desktop only */}
+            <div className="hidden md:block flex-1 border-r border-[var(--border)] p-4 overflow-y-auto">
+              <nav className="space-y-2">
+                {infoLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="block font-body text-sm hover:text-[var(--muted)] transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+            </div>
+
+            {/* LEGAL Section - Desktop only */}
+            <div className="hidden md:block flex-1 border-r border-[var(--border)] p-4 overflow-y-auto">
+              <nav className="space-y-2">
+                <a href="/privacy" className="block font-body text-sm hover:text-[var(--muted)] transition-colors">
+                  Privacy Policy
+                </a>
+                <a href="/terms" className="block font-body text-sm hover:text-[var(--muted)] transition-colors">
+                  Terms of Service
+                </a>
+                <a href="/cookies" className="block font-body text-sm hover:text-[var(--muted)] transition-colors">
+                  Cookie Policy
+                </a>
+              </nav>
+            </div>
+
+            {/* SERVICES Section - Desktop only */}
+            <div className="hidden md:block flex-1 border-r border-[var(--border)] p-4 overflow-y-auto">
+              <div className="space-y-2">
+                {services.map((service) => (
+                  <div key={service.id}>
+                    <button
+                      onClick={() => toggleService(service.id)}
+                      className="flex items-center gap-2 font-body text-sm font-medium w-full text-left hover:text-[var(--muted)] transition-colors"
                     >
-                      {link.label}
-                    </a>
-                  ))}
-                </nav>
+                      <span className="w-4">{expandedService === service.id ? '−' : '+'}</span>
+                      <span className="underline">{service.title}</span>
+                    </button>
+                    {expandedService === service.id && (
+                      <div className="ml-6 mt-2 mb-3 animate-fade-in">
+                        <p className="text-xs text-[var(--muted)] mb-2 leading-relaxed">
+                          {service.description}
+                        </p>
+                        <a
+                          href={service.link}
+                          className="text-xs font-medium underline hover:text-[var(--muted)] transition-colors"
+                        >
+                          SEE MORE
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-
-              {/* LEGAL Section */}
-              <div className="flex-1 border-r border-[var(--border)] p-4 overflow-y-auto">
-                <h3 className="font-display text-sm font-bold mb-4 md:hidden">LEGAL</h3>
-                <nav className="space-y-2">
-                  <a href="/privacy" className="block font-body text-sm hover:text-[var(--muted)] transition-colors">
-                    Privacy Policy
-                  </a>
-                  <a href="/terms" className="block font-body text-sm hover:text-[var(--muted)] transition-colors">
-                    Terms of Service
-                  </a>
-                  <a href="/cookies" className="block font-body text-sm hover:text-[var(--muted)] transition-colors">
-                    Cookie Policy
-                  </a>
-                </nav>
-              </div>
-
-              {/* SERVICES Section */}
-              <div className="flex-1 border-r border-[var(--border)] p-4 overflow-y-auto">
-                <h3 className="font-display text-sm font-bold mb-4 md:hidden">SERVICES</h3>
-                <div className="space-y-2">
-                  {services.map((service) => (
-                    <div key={service.id}>
-                      <button
-                        onClick={() => toggleService(service.id)}
-                        className="flex items-center gap-2 font-body text-sm font-medium w-full text-left hover:text-[var(--muted)] transition-colors"
-                      >
-                        <span className="w-4">{expandedService === service.id ? '−' : '+'}</span>
-                        <span className="underline">{service.title}</span>
-                      </button>
-                      {expandedService === service.id && (
-                        <div className="ml-6 mt-2 mb-3 animate-fade-in">
-                          <p className="text-xs text-[var(--muted)] mb-2 leading-relaxed">
-                            {service.description}
-                          </p>
-                          <a
-                            href={service.link}
-                            className="text-xs font-medium underline hover:text-[var(--muted)] transition-colors"
-                          >
-                            SEE MORE
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Additional Info Box */}
-                <div className="mt-4 p-3 bg-[var(--accent)] text-white">
-                  <p className="text-xs leading-relaxed">
-                    Additional information about Services
-                  </p>
-                </div>
+              
+              {/* Additional Info Box */}
+              <div className="mt-4 p-3 bg-[var(--accent)] text-white">
+                <p className="text-xs leading-relaxed">
+                  Additional information about Services
+                </p>
               </div>
             </div>
 
-            {/* Form Section */}
-            <div className="flex-[1.5] p-4 overflow-y-auto bg-[var(--surface)]">
+            {/* Form Section - Full width on mobile */}
+            <div className="flex-1 md:flex-[1.5] p-4 pb-6 overflow-y-auto bg-[var(--surface)]">
               <IntakeFormWizard />
             </div>
           </div>

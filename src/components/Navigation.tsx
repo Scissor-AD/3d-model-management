@@ -2,12 +2,26 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const navItems = [
   { label: 'HOME', href: '/' },
   { label: 'SOLUTIONS', href: '/solutions' },
   { label: 'STRATEGIC ALLIES', href: '/strategic-allies' },
   { label: 'ABOUT US', href: '/about' },
+];
+
+const infoLinks = [
+  { label: 'TEAMS', href: '/teams' },
+  { label: 'ALLIED', href: '/allied' },
+  { label: 'CAREERS', href: '/careers' },
+  { label: 'LINK', href: '/link' },
+];
+
+const legalLinks = [
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Service', href: '/terms' },
+  { label: 'Cookie Policy', href: '/cookies' },
 ];
 
 export default function Navigation() {
@@ -18,16 +32,15 @@ export default function Navigation() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-[var(--background)]">
       <nav className="flex items-center justify-between px-6 md:px-12 h-[var(--nav-height)] border-b-2 border-[var(--border-dark)]">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 md:w-12 md:h-12 relative">
-            {/* 3D Cube Logo */}
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-              <path d="M24 4L44 14V34L24 44L4 34V14L24 4Z" stroke="currentColor" strokeWidth="2" fill="none"/>
-              <path d="M24 4L24 24M24 24L44 14M24 24L4 14M24 24V44" stroke="currentColor" strokeWidth="2"/>
-              <path d="M14 9L34 19V39" stroke="currentColor" strokeWidth="1.5" opacity="0.5"/>
-            </svg>
-          </div>
-          <span className="font-display text-xl md:text-2xl font-bold tracking-tight">3D MM</span>
+        <Link href="/" className="flex items-center group">
+          <Image
+            src="/3d_mm_logo.svg"
+            alt="3D MM Logo"
+            width={123}
+            height={39}
+            priority
+            className="h-8 md:h-10 w-auto"
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -81,8 +94,9 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[var(--nav-height)] bg-[var(--background)] z-40 animate-fade-in">
+        <div className="lg:hidden fixed inset-0 top-[var(--nav-height)] bg-[var(--background)] z-40 animate-fade-in overflow-y-auto">
           <div className="flex flex-col p-6">
+            {/* Main Navigation */}
             {navItems.map((item, index) => (
               <Link
                 key={item.label}
@@ -93,6 +107,45 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
+            
+            {/* Info & Legal Section */}
+            <div className="mt-8 pt-6 border-t border-[var(--border-dark)]">
+              <div className="grid grid-cols-2 gap-8">
+                {/* Info Links */}
+                <div>
+                  <h3 className="font-display text-sm font-bold mb-4 text-[var(--muted)]">INFO</h3>
+                  <nav className="space-y-3">
+                    {infoLinks.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block font-body text-sm hover:text-[var(--muted)] transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </nav>
+                </div>
+                
+                {/* Legal Links */}
+                <div>
+                  <h3 className="font-display text-sm font-bold mb-4 text-[var(--muted)]">LEGAL</h3>
+                  <nav className="space-y-3">
+                    {legalLinks.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block font-body text-sm hover:text-[var(--muted)] transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </nav>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

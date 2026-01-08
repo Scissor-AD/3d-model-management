@@ -79,17 +79,31 @@ export default function IntakeFormWizard() {
   return (
     <div className="h-full flex flex-col">
       {/* Step Indicator */}
-      <div className="flex items-center justify-between mb-6 px-1">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex items-center">
-            <div className="flex flex-col items-center">
+      <div className="mb-6 px-1">
+        {/* Circles row with connecting lines */}
+        <div className="grid" style={{ gridTemplateColumns: `repeat(${steps.length}, 1fr)` }}>
+          {steps.map((step, index) => (
+            <div key={step.id} className="flex items-center justify-center relative">
+              {/* Left line segment */}
+              {index > 0 && (
+                <div 
+                  className={`absolute right-1/2 top-1/2 -translate-y-1/2 h-[2px] w-full transition-colors ${currentStep > index ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}
+                />
+              )}
+              {/* Right line segment */}
+              {index < steps.length - 1 && (
+                <div 
+                  className={`absolute left-1/2 top-1/2 -translate-y-1/2 h-[2px] w-full transition-colors ${currentStep > step.id ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}
+                />
+              )}
+              {/* Circle */}
               <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-all
+                className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-all
                   ${currentStep === step.id 
                     ? 'bg-[var(--accent)] text-white' 
                     : currentStep > step.id 
                       ? 'bg-[var(--accent)] text-white'
-                      : 'bg-[var(--surface-elevated)] text-[var(--muted)] border border-[var(--border)]'
+                      : 'bg-[var(--surface)] text-[var(--muted)] border border-[var(--border)]'
                   }`}
               >
                 {currentStep > step.id ? (
@@ -100,15 +114,23 @@ export default function IntakeFormWizard() {
                   step.id
                 )}
               </div>
-              <span className="text-[10px] text-[var(--muted)] mt-1 whitespace-nowrap hidden sm:block">
+            </div>
+          ))}
+        </div>
+        
+        {/* Labels row - separate grid with same column structure */}
+        <div className="grid mt-1 hidden sm:grid" style={{ gridTemplateColumns: `repeat(${steps.length}, 1fr)` }}>
+          {steps.map((step) => (
+            <div 
+              key={`label-${step.id}`}
+              className="text-center overflow-hidden"
+            >
+              <span className="text-[10px] text-[var(--muted)] truncate block">
                 {step.name}
               </span>
             </div>
-            {index < steps.length - 1 && (
-              <div className={`w-4 sm:w-8 h-[2px] mx-1 ${currentStep > step.id ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`} />
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Form Content */}

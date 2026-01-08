@@ -119,15 +119,15 @@ export default function Home() {
         </section>
 
         {/* Reality Capture Section - Preview */}
-        <section className="hidden md:flex min-h-screen px-6 md:px-12 py-20">
-          <div className="flex-1 pr-12">
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-8">REALITY CAPTURE</h2>
+        <section className="flex flex-col md:flex-row min-h-screen px-6 md:px-12 py-12 md:py-20 gap-8 md:gap-0">
+          <div className="flex-1 md:pr-12">
+            <h2 className="font-display text-3xl md:text-5xl font-bold mb-6 md:mb-8">REALITY CAPTURE</h2>
             
             <div className="mb-8">
-              <button className="accordion-trigger open font-display text-lg font-semibold mb-4">
+              <button className="accordion-trigger open font-display text-base md:text-lg font-semibold mb-3 md:mb-4">
                 LASER SCANNING
               </button>
-              <p className="text-[var(--muted)] leading-relaxed ml-6">
+              <p className="text-[var(--muted)] leading-relaxed ml-6 text-sm md:text-base">
                 Our team works interchangeably with Leica and NavVis Equipment for comprehensive 
                 reality capture solutions. We deliver high-accuracy point clouds for projects of 
                 any scale, from single rooms to entire campuses.

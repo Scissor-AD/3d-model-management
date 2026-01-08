@@ -210,14 +210,20 @@ input:focus, select:focus, textarea:focus {
 /* Mobile Drawer */
 @media (max-width: 768px) {
   :root {
-    --control-bar-height: 56px;
-    --control-bar-expanded-height: 85vh;
+    --control-bar-height: 52px;
+    --control-bar-expanded-height: calc(100vh - var(--nav-height) - 16px);
     --nav-height: 64px;
   }
   
   .control-bar.expanded {
     height: var(--control-bar-expanded-height);
     border-radius: 24px 24px 0 0;
+    max-height: calc(100dvh - var(--nav-height) - 16px);
+  }
+  
+  .control-bar.collapsed {
+    /* Ensure collapsed bar has enough touch target */
+    min-height: var(--control-bar-height);
   }
 }
 
