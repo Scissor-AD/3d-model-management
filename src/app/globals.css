@@ -1,26 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FAFAFA;
+  --foreground: #0D0D0D;
+  --accent: #0D0D0D;
+  --accent-secondary: #404040;
+  --border: #E0E0E0;
+  --border-dark: #0D0D0D;
+  --muted: #737373;
+  --surface: #FFFFFF;
+  --surface-elevated: #F5F5F5;
+  
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --control-bar-height: 60px;
+  --control-bar-expanded-height: 400px;
+  --nav-height: 80px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent: var(--accent);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-border: var(--border);
+  --color-border-dark: var(--border-dark);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Control Bar Styles */
+.control-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 2px solid var(--border-dark);
+  z-index: 100;
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.control-bar.collapsed {
+  height: var(--control-bar-height);
+}
+
+.control-bar.expanded {
+  height: var(--control-bar-expanded-height);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-elevated);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
+
+/* Form Styles */
+input, select, textarea {
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent) !important;
+}
+
+/* Button Styles */
+.btn-primary {
+  background: var(--accent);
+  color: var(--surface);
+  border: none;
+  padding: 12px 24px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--accent-secondary);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  padding: 10px 22px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+/* Accordion Styles */
+.accordion-trigger {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.accordion-trigger::before {
+  content: '+';
+  font-weight: 500;
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.accordion-trigger.open::before {
+  content: '-';
+}
+
+/* Link Hover Effect */
+.link-hover {
+  position: relative;
+  text-decoration: none;
+}
+
+.link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
+
+/* Hero Section */
+.hero-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.hero-tagline .highlight {
+  color: var(--muted);
+}
+
+/* Mobile Drawer */
+@media (max-width: 768px) {
+  :root {
+    --control-bar-height: 56px;
+    --control-bar-expanded-height: 85vh;
+    --nav-height: 64px;
+  }
+  
+  .control-bar.expanded {
+    height: var(--control-bar-expanded-height);
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* Stagger animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* Grid pattern background */
+.grid-pattern {
+  background-image: 
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
 }

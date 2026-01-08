@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 3D Model Management
+
+A modern, responsive website for 3D Model Management - a design technology service provider specializing in laser scanning, BIM modeling, point cloud processing, and as-built documentation.
+
+## Features
+
+- **Responsive Design**: Fully responsive layout optimized for desktop and mobile devices
+- **Sticky Control Bar**: Expandable bottom control bar with:
+  - INFO section (Teams, Allied, Careers, Link)
+  - LEGAL section (Privacy Policy, Terms of Service, Cookie Policy)
+  - SERVICES section with expandable accordion items
+  - Multi-step intake form wizard (6 steps)
+- **Mobile Drawer**: Control bar transforms into a full-screen drawer on mobile
+- **Modern Typography**: Bebas Neue for display text, DM Sans for body copy
+- **Grid Pattern Background**: Subtle grid pattern for visual depth
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS v4
+- **Language**: TypeScript
+- **Fonts**: Google Fonts (Bebas Neue, DM Sans, JetBrains Mono)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18.17 or later
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd 3d-model-management
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── globals.css      # Global styles and CSS variables
+│   ├── layout.tsx       # Root layout with metadata
+│   └── page.tsx         # Home page component
+├── components/
+│   ├── Navigation.tsx   # Top navigation bar
+│   ├── ControlBar.tsx   # Sticky bottom control bar
+│   └── IntakeFormWizard.tsx # Multi-step form wizard
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Customization
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Colors
+Edit the CSS variables in `src/app/globals.css`:
 
-## Deploy on Vercel
+```css
+:root {
+  --background: #FAFAFA;
+  --foreground: #0D0D0D;
+  --accent: #0D0D0D;
+  --border: #E0E0E0;
+  --muted: #737373;
+  /* ... */
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Fonts
+Fonts are loaded via Google Fonts in `globals.css`. Update the `--font-display`, `--font-body`, and `--font-mono` variables to change fonts.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+Build for production:
+```bash
+npm run build
+```
+
+Start production server:
+```bash
+npm start
+```
+
+## License
+
+MIT
