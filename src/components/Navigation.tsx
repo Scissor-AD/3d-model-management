@@ -94,7 +94,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[var(--nav-height)] bg-[var(--background)] z-40 animate-fade-in overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 top-[var(--nav-height)] bg-[var(--background)] z-40 overflow-y-auto">
           <div className="flex flex-col p-6">
             {/* Main Navigation */}
             {navItems.map((item, index) => (
@@ -102,7 +102,8 @@ export default function Navigation() {
                 key={item.label}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`font-display text-3xl font-bold py-4 border-b border-[var(--border)] animate-fade-in-up stagger-${index + 1}`}
+                className="font-display text-3xl font-bold py-4 border-b border-[var(--border)] text-[var(--foreground)]"
+                style={{ animationDelay: `${(index + 1) * 0.05}s` }}
               >
                 {item.label}
               </Link>
