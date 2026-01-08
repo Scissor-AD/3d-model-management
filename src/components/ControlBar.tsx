@@ -70,7 +70,7 @@ export default function ControlBar() {
         </div>
 
         {/* Control Bar Header - Always Visible */}
-        <div className={`flex items-center border-b border-[var(--border)] ${isExpanded ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`flex items-center ${isExpanded ? 'border-b border-[var(--border)] hidden md:flex' : 'flex'}`}>
           {/* Desktop: Show all sections in header */}
           <div className="hidden md:flex flex-1">
             <div className="flex-1 px-4 py-4 border-r border-[var(--border)]">
@@ -94,10 +94,10 @@ export default function ControlBar() {
           {/* Mobile: Simple toggle */}
           <button
             onClick={toggleExpand}
-            className="md:hidden flex-1 flex items-center justify-between px-4 py-2"
+            className="md:hidden flex-1 flex items-center justify-between px-5 py-3"
           >
-            <span className="font-display text-sm font-bold">REQUEST INFORMATION</span>
-            <span className="text-xl">{isExpanded ? '−' : '+'}</span>
+            <span className="font-display text-sm font-bold tracking-wide">REQUEST INFORMATION</span>
+            <span className="text-xl font-medium">{isExpanded ? '−' : '+'}</span>
           </button>
         </div>
 

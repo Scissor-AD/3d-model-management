@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import ControlBar from '@/components/ControlBar';
 
@@ -17,92 +18,14 @@ export default function Home() {
           <div className="relative z-10 w-full max-w-4xl aspect-[4/3] mb-8 md:mb-12">
             {/* Placeholder for 3D model/image - styled as a wireframe box */}
             <div className="w-full h-full flex items-center justify-center">
-              <div className="relative w-full max-w-2xl aspect-[3/2]">
-                {/* Building Silhouette Placeholder */}
-                <svg 
-                  viewBox="0 0 400 300" 
-                  className="w-full h-full"
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Ground line */}
-                  <line x1="0" y1="280" x2="400" y2="280" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
-                  
-                  {/* Main building structure */}
-                  <g className="opacity-80">
-                    {/* Left building */}
-                    <rect x="30" y="120" width="100" height="160" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                    <rect x="40" y="135" width="20" height="30" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="70" y="135" width="20" height="30" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="100" y="135" width="20" height="30" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="40" y="180" width="20" height="30" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="70" y="180" width="20" height="30" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="100" y="180" width="20" height="30" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="40" y="225" width="20" height="30" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="70" y="225" width="20" height="55" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="100" y="225" width="20" height="30" stroke="currentColor" strokeWidth="1"/>
-                    {/* Roof */}
-                    <path d="M25 120 L80 80 L135 120" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                    
-                    {/* Center building (taller) */}
-                    <rect x="150" y="60" width="100" height="220" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                    {[0, 1, 2, 3, 4, 5].map((row) => (
-                      <g key={row}>
-                        <rect x="160" y={75 + row * 35} width="18" height="25" stroke="currentColor" strokeWidth="0.8"/>
-                        <rect x="185" y={75 + row * 35} width="18" height="25" stroke="currentColor" strokeWidth="0.8"/>
-                        <rect x="210" y={75 + row * 35} width="18" height="25" stroke="currentColor" strokeWidth="0.8"/>
-                        <rect x="235" y={75 + row * 35} width="8" height="25" stroke="currentColor" strokeWidth="0.8"/>
-                      </g>
-                    ))}
-                    {/* Entrance */}
-                    <rect x="185" y="255" width="30" height="25" stroke="currentColor" strokeWidth="1"/>
-                    {/* Roof detail */}
-                    <rect x="170" y="50" width="60" height="10" stroke="currentColor" strokeWidth="1" fill="none"/>
-                    
-                    {/* Right building */}
-                    <rect x="270" y="140" width="100" height="140" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                    <rect x="280" y="155" width="20" height="25" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="310" y="155" width="20" height="25" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="340" y="155" width="20" height="25" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="280" y="195" width="20" height="25" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="310" y="195" width="20" height="25" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="340" y="195" width="20" height="25" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="280" y="235" width="20" height="25" stroke="currentColor" strokeWidth="1"/>
-                    <rect x="310" y="235" width="40" height="45" stroke="currentColor" strokeWidth="1"/>
-                    {/* Steps */}
-                    <line x1="310" y1="280" x2="310" y2="285" stroke="currentColor" strokeWidth="1"/>
-                    <line x1="305" y1="285" x2="355" y2="285" stroke="currentColor" strokeWidth="1"/>
-                  </g>
-                  
-                  {/* Scan lines effect */}
-                  <g className="opacity-20">
-                    {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                      <line 
-                        key={i} 
-                        x1="0" 
-                        y1={50 + i * 35} 
-                        x2="400" 
-                        y2={50 + i * 35} 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        strokeDasharray="2 4"
-                      />
-                    ))}
-                  </g>
-                  
-                  {/* Point cloud dots */}
-                  <g className="opacity-40">
-                    {Array.from({ length: 50 }).map((_, i) => (
-                      <circle 
-                        key={i}
-                        cx={50 + Math.random() * 300}
-                        cy={80 + Math.random() * 180}
-                        r="1.5"
-                        fill="currentColor"
-                      />
-                    ))}
-                  </g>
-                </svg>
+              <div className="relative w-full max-w-4xl aspect-[3/2]">
+                <Image 
+                  src="/ChatGPT Image Jan 8, 2026, 02_46_47 PM.png"
+                  alt="3D Model Management Hero"
+                  fill
+                  className="object-contain"
+                  priority
+                />
               </div>
             </div>
           </div>

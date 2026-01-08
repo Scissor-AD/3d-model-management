@@ -78,10 +78,12 @@ h1, h2, h3, h4, h5, h6 {
   border-top: 2px solid var(--border-dark);
   z-index: 100;
   transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Account for mobile safe areas */
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .control-bar.collapsed {
-  height: var(--control-bar-height);
+  height: calc(var(--control-bar-height) + env(safe-area-inset-bottom, 0));
 }
 
 .control-bar.expanded {
@@ -208,20 +210,45 @@ input:focus, select:focus, textarea:focus {
 /* Mobile Drawer */
 @media (max-width: 768px) {
   :root {
-    --control-bar-height: 52px;
-    --control-bar-expanded-height: calc(100vh - var(--nav-height) - 16px);
+    --control-bar-height: 60px;
+    --control-bar-expanded-height: calc(100dvh - var(--nav-height) - 24px);
     --nav-height: 64px;
   }
   
-  .control-bar.expanded {
-    height: var(--control-bar-expanded-height);
-    border-radius: 24px 24px 0 0;
-    max-height: calc(100dvh - var(--nav-height) - 16px);
+  .control-bar {
+    /* Floating card style on mobile */
+    bottom: calc(20px + env(safe-area-inset-bottom, 0));
+    left: 16px;
+    right: 16px;
+    border-radius: 12px;
+    border: 2px solid var(--border-dark);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   }
   
   .control-bar.collapsed {
-    /* Ensure collapsed bar has enough touch target */
-    min-height: var(--control-bar-height);
+    height: var(--control-bar-height);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  /* Hide the drag handle in collapsed state on mobile */
+  .control-bar.collapsed > div:first-child {
+    display: none;
+  }
+  
+  .control-bar.expanded {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--control-bar-expanded-height);
+    border-radius: 24px 24px 0 0;
+    max-height: calc(100dvh - var(--nav-height) - 16px);
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
   }
 }
 
