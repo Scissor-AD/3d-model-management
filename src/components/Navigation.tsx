@@ -58,8 +58,8 @@ export default function Navigation() {
 
         {/* Language Selector & Mobile Menu Button */}
         <div className="flex items-center gap-6">
-          {/* Language Dropdown */}
-          <div className="relative group">
+          {/* Language Dropdown - Hidden for now, will implement fully later */}
+          <div className="relative group hidden">
             <button className="flex items-center gap-2 font-body text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] transition-colors">
               {language}
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="transition-transform group-hover:rotate-180">

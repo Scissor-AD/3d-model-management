@@ -49,8 +49,9 @@ export default function ControlBar() {
     setExpandedService(expandedService === serviceId ? null : serviceId);
   };
 
+  // Hidden for now - will implement fully later
   return (
-    <>
+    <div className="hidden">
       {/* Backdrop for mobile when expanded */}
       {isExpanded && (
         <div 
@@ -178,7 +179,7 @@ export default function ControlBar() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
