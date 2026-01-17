@@ -44,7 +44,7 @@ export default function Home() {
         {/* Reality Capture Section - Preview */}
         <section className="flex flex-col md:flex-row min-h-screen px-6 md:px-12 py-12 md:py-20 gap-8 md:gap-0">
           <div className="flex-1 md:pr-12">
-            <h2 className="font-display text-3xl md:text-5xl font-bold mb-6 md:mb-8">REALITY CAPTURE</h2>
+            <h2 className="section-heading mb-6 md:mb-8">REALITY CAPTURE</h2>
             
             <div className="mb-8">
               <button className="accordion-trigger open font-display text-base md:text-lg font-semibold mb-3 md:mb-4">

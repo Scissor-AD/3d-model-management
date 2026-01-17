@@ -203,6 +203,14 @@ input:focus, select:focus, textarea:focus {
   letter-spacing: 0.04em;
 }
 
+/* Section Headings - matches hero tagline size */
+.section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
 .hero-tagline .highlight {
   color: var(--muted);
 }
