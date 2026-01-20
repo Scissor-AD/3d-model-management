@@ -11,9 +11,9 @@
   --surface: #FFFFFF;
   --surface-elevated: #F5F5F5;
   
-  --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-mono: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display: 'neue-haas-grotesk-display', 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'neue-haas-grotesk-text', 'Neue Haas Grotesk Text Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'neue-haas-grotesk-text', 'Neue Haas Grotesk Text Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   
   --control-bar-height: 60px;
   --control-bar-expanded-height: 400px;
