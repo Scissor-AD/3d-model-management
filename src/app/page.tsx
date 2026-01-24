@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import ControlBar from '@/components/ControlBar';
+import SquareFootageCounter from '@/components/SquareFootageCounter';
 
 export default function Home() {
   return (
@@ -15,10 +16,10 @@ export default function Home() {
           <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
           
           {/* 3D Model Placeholder */}
-          <div className="relative z-10 w-full max-w-4xl aspect-[4/3] mb-8 md:mb-12">
+          <div className="relative z-10 w-full max-w-sm md:max-w-3xl aspect-[4/3] mb-8 md:mb-6">
             {/* Placeholder for 3D model/image - styled as a wireframe box */}
             <div className="w-full h-full flex items-center justify-center">
-              <div className="relative w-full max-w-4xl aspect-[3/2]">
+              <div className="relative w-full max-w-sm md:max-w-3xl aspect-[3/2]">
                 <Image 
                   src="/hero-image.png"
                   alt="3D Model Management Hero"
@@ -38,6 +39,15 @@ export default function Home() {
               <span className="text-[var(--foreground)]">SERVICE</span>{' '}
               <span className="text-[var(--foreground)]">PROVIDER</span>
             </h1>
+          </div>
+          
+          {/* Square Footage Counter */}
+          <div className="relative z-10 mt-8 md:mt-6 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+            <SquareFootageCounter 
+              targetValue={12500000}
+              duration={2500}
+              label="SQUARE FEET CAPTURED"
+            />
           </div>
         </section>
 
