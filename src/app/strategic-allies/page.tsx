@@ -75,27 +75,7 @@ const caseStudyContent = {
 
 const workWithUsContent = {
   intro: {
-    paragraph: 'Most companies will not have the internal resources to embark on a Digital Twin endeavor. 3D Model Management is specifically configured to provide the additional hands, equipment and knowledge base that will enable you to start, to scale and to maximize your digital transformation process. Connect with us, early in the process, to help you define your successful Pilot Project.',
-  },
-  steps: {
-    title: 'HOW TO GET STARTED',
-    items: [
-      {
-        step: 1,
-        title: 'INITIAL CONSULTATION',
-        description: 'Connect with our team to discuss your organizational priorities and explore how our strategic alliances can address your specific needs.',
-      },
-      {
-        step: 2,
-        title: 'SOLUTION DESIGN',
-        description: 'We work with you to identify the right combination of technologies and partners to deliver a tailored solution for your project.',
-      },
-      {
-        step: 3,
-        title: 'PILOT PROJECT',
-        description: 'Start with a focused pilot project that demonstrates value and builds the foundation for broader digital transformation.',
-      },
-    ],
+    paragraph: 'Embarking on a Digital Twin initiative can be challenging for organizations without dedicated internal resources. 3D Model Management is designed to provide the expertise, equipment, and support needed to help you start, scale, and maximize your digital transformation journey. By partnering with us early in the process, we can work together to define a clear, achievable Pilot Project that sets the foundation for long-term success.',
   },
 };
 
@@ -236,25 +216,6 @@ export default function StrategicAlliesPage() {
               <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
                 {workWithUsContent.intro.paragraph}
               </p>
-            </div>
-
-            {/* Steps */}
-            <div>
-              <h3 className="font-display text-sm font-semibold tracking-wide mb-6">
-                {workWithUsContent.steps.title}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-                {workWithUsContent.steps.items.map((item) => (
-                  <div key={item.step}>
-                    <h4 className="font-display text-sm font-semibold tracking-wide mb-4">
-                      STEP {item.step} - {item.title}
-                    </h4>
-                    <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-                      {item.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* CTA Button */}
