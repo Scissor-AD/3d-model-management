@@ -32,7 +32,7 @@ const digitalProductionContent = {
     },
     {
       title: 'DIGITAL DESIGN PRODUCTION',
-      description: 'Our digital twin implementations provide a reliable foundation for project planning and architectural resource tracking. These virtual environments deliver real-time insight, supporting smarter planning, coordination, and long-term asset management.',
+      description: 'Our team supports digital design implementation through dedicated resource assignment, working closely with clients to integrate design intent into practical, data-driven workflows. We provide focused expertise to ensure seamless execution from concept through delivery.',
     },
     {
       title: 'ASSET LIBRARY DEVELOPMENT',
