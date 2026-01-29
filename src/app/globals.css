@@ -296,6 +296,47 @@ input:focus, select:focus, textarea:focus {
 .stagger-4 { animation-delay: 0.4s; }
 .stagger-5 { animation-delay: 0.5s; }
 
+/* Tagline rotation animations */
+@keyframes taglineEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(100%) rotateX(-45deg);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+    filter: blur(0);
+  }
+}
+
+@keyframes taglineExit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100%) rotateX(45deg);
+    filter: blur(4px);
+  }
+}
+
+.tagline-text {
+  display: inline-block;
+  transform-origin: center center;
+  perspective: 1000px;
+}
+
+.tagline-enter {
+  animation: taglineEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.tagline-exit {
+  animation: taglineExit 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
 /* Grid pattern background */
 .grid-pattern {
   background-image: 

@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import ControlBar from '@/components/ControlBar';
 import SquareFootageCounter from '@/components/SquareFootageCounter';
+import AnimatedTagline from '@/components/AnimatedTagline';
 
 export default function Home() {
   return (
@@ -33,12 +34,7 @@ export default function Home() {
           
           {/* Tagline */}
           <div className="relative z-10 text-center animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-            <h1 className="hero-tagline">
-              <span className="text-[var(--foreground)]">DESIGN</span>{' '}
-              <span className="highlight">TECHNOLOGY</span>{' '}
-              <span className="text-[var(--foreground)]">SERVICE</span>{' '}
-              <span className="text-[var(--foreground)]">PROVIDER</span>
-            </h1>
+            <AnimatedTagline />
           </div>
           
           {/* Square Footage Counter */}
