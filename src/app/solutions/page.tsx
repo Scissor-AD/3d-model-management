@@ -74,24 +74,24 @@ export default function SolutionsPage() {
       case 'digital-production':
         return (
           <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-6">
               {digitalProductionContent.sections.map((section) => (
                 <div key={section.title}>
-                  <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
+                  <h3 className="font-display text-sm font-semibold tracking-wide mb-2 lg:mb-1">
                     {section.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                  <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify lg:text-xs lg:leading-relaxed">
                     {section.description}
                   </p>
                 </div>
               ))}
             </div>
-            <p className="text-base text-[var(--muted)] mt-8">
+            <p className="text-base text-[var(--muted)] mt-6 lg:mt-4 lg:text-sm">
               Have a project in mind that's not listed here? Contact us with a description of your goals, and we'll assess how we can support your vision.
             </p>
             <button
               onClick={() => setContactDrawerOpen(true)}
-              className="mt-6 px-6 py-3 bg-white border border-[var(--foreground)] text-[var(--foreground)] font-display text-sm font-medium tracking-wide hover:bg-[var(--foreground)] hover:text-white transition-colors"
+              className="mt-4 lg:mt-3 px-6 py-3 lg:py-2 bg-white border border-[var(--foreground)] text-[var(--foreground)] font-display text-sm font-medium tracking-wide hover:bg-[var(--foreground)] hover:text-white transition-colors"
             >
               CONTACT US
             </button>
@@ -141,17 +141,17 @@ export default function SolutionsPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen lg:h-screen lg:max-h-screen flex flex-col lg:overflow-hidden">
       <Navigation />
 
-      <main className="flex-1 pt-[var(--nav-height)]">
-        <section className="mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)]">
-          <div className="p-6 md:p-10">
+      <main className="flex-1 pt-[var(--nav-height)] lg:h-[calc(100vh-var(--nav-height))] lg:overflow-hidden">
+        <section className="mx-4 md:mx-8 my-6 md:my-10 lg:my-6 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)] lg:h-[calc(100vh-var(--nav-height)-3rem)] lg:overflow-hidden lg:flex lg:flex-col">
+          <div className="p-6 md:p-10 lg:p-6 lg:flex-1 lg:flex lg:flex-col lg:overflow-hidden">
             {/* Page Title */}
-            <h1 className="section-heading mb-6">SOLUTIONS</h1>
+            <h1 className="section-heading mb-6 lg:mb-4 lg:text-xl">SOLUTIONS</h1>
 
             {/* Tabs */}
-            <div className="border-b border-[var(--border)] mb-6 overflow-x-auto">
+            <div className="border-b border-[var(--border)] mb-6 lg:mb-4 overflow-x-auto">
               <nav className="flex gap-4 md:gap-8 min-w-max">
                 {tabs.map((tab) => (
                   <button
@@ -170,12 +170,12 @@ export default function SolutionsPage() {
             </div>
 
             {/* Tab Content */}
-            <div className="animate-fade-in mb-10" key={activeTab}>
+            <div className="animate-fade-in mb-6 lg:mb-4 lg:flex-shrink-0" key={activeTab}>
               {renderContent()}
             </div>
 
             {/* Asset Image */}
-            <div className="w-full mt-8">
+            <div className="w-full mt-auto lg:flex-1 lg:min-h-0">
               <img
                 src={
                   activeTab === 'digital-production' 
@@ -191,10 +191,10 @@ export default function SolutionsPage() {
                     ? 'Laser scanner on tripod in industrial facility'
                     : '3D model scan of construction site with exposed roof trusses'
                 }
-                className={`w-full h-auto md:aspect-[21/9] ${
+                className={`w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full ${
                   activeTab === 'digital-production'
-                    ? 'object-contain aspect-[4/3] sm:aspect-video md:object-cover'
-                    : 'object-cover aspect-[16/9] sm:aspect-video'
+                    ? 'object-contain aspect-[4/3] sm:aspect-video md:object-cover lg:object-contain'
+                    : 'object-cover aspect-[16/9] sm:aspect-video lg:object-contain'
                 }`}
               />
             </div>

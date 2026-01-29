@@ -48,16 +48,16 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen lg:h-screen lg:max-h-screen flex flex-col lg:overflow-hidden">
       <Navigation />
 
-      <main className="flex-1 pt-[var(--nav-height)]">
-        <section className="min-h-[calc(100vh-var(--nav-height))] flex flex-col">
+      <main className="flex-1 pt-[var(--nav-height)] lg:h-[calc(100vh-var(--nav-height))] lg:overflow-hidden">
+        <section className="min-h-[calc(100vh-var(--nav-height))] lg:h-full flex flex-col lg:overflow-hidden">
           {/* Desktop: Two-column layout, Mobile: Single column */}
-          <div className="flex-1 flex flex-col lg:flex-row">
+          <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
             {/* About Us - Right on desktop, First on mobile */}
-            <div className="p-6 md:p-10 lg:p-12 lg:w-1/2 lg:order-2">
-              <h2 className="font-display text-sm font-bold tracking-wide mb-6">ABOUT US</h2>
+            <div className="p-6 md:p-10 lg:p-8 lg:w-1/2 lg:order-2 lg:overflow-auto">
+              <h2 className="font-display text-sm font-bold tracking-wide mb-4 lg:mb-3">ABOUT US</h2>
               
               <div className="space-y-6">
                 <p className="text-sm text-[var(--foreground)] leading-relaxed">
@@ -70,10 +70,10 @@ export default function AboutPage() {
             </div>
 
             {/* Contact Form - Left on desktop, Second on mobile */}
-            <div className="p-6 md:p-10 lg:p-12 lg:w-1/2 lg:order-1 lg:border-r lg:border-[var(--border)] border-t lg:border-t-0 border-[var(--border)]">
-              <h2 className="font-display text-sm font-bold tracking-wide mb-6">CONTACT</h2>
+            <div className="p-6 md:p-10 lg:p-8 lg:w-1/2 lg:order-1 lg:border-r lg:border-[var(--border)] border-t lg:border-t-0 border-[var(--border)] lg:overflow-auto">
+              <h2 className="font-display text-sm font-bold tracking-wide mb-4 lg:mb-3">CONTACT</h2>
               
-              <p className="text-sm text-[var(--foreground)] mb-6 leading-relaxed">
+              <p className="text-sm text-[var(--foreground)] mb-4 lg:mb-3 leading-relaxed">
                 Complete the form below for a complimentary consultation or email us directly at{' '}
                 <a 
                   href="mailto:info@3dmodelmanagement.co" 
@@ -83,7 +83,7 @@ export default function AboutPage() {
                 </a>
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-4">
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -192,7 +192,7 @@ export default function AboutPage() {
           </div>
 
           {/* Footer - Locations & Legal */}
-          <div className="border-t border-[var(--border)] p-6 md:p-10 lg:p-12 flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+          <div className="border-t border-[var(--border)] p-6 md:p-10 lg:px-8 lg:py-4 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 lg:gap-4 lg:flex-shrink-0">
             <div>
               <h3 className="font-display text-sm font-bold tracking-wide mb-4">LOCATIONS</h3>
               <p className="text-sm text-[var(--foreground)]">

@@ -2,12 +2,12 @@ import Navigation from '@/components/Navigation';
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen lg:h-screen lg:max-h-screen flex flex-col lg:overflow-hidden">
       <Navigation />
 
-      <main className="flex-1 pt-[var(--nav-height)]">
-        <section className="mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)]">
-          <div className="p-6 md:p-10 max-w-4xl">
+      <main className="flex-1 pt-[var(--nav-height)] lg:h-[calc(100vh-var(--nav-height))] lg:overflow-hidden">
+        <section className="mx-4 md:mx-8 my-6 md:my-10 lg:my-6 bg-[var(--surface)] lg:h-[calc(100vh-var(--nav-height)-3rem)] lg:overflow-hidden">
+          <div className="p-6 md:p-10 lg:p-8 max-w-4xl lg:h-full lg:overflow-y-auto">
             <h1 className="section-heading mb-8">TERMS OF SERVICE</h1>
             
             <p className="text-sm text-[var(--muted)] mb-8">Last updated: January 2026</p>

@@ -49,6 +49,15 @@ body {
   overflow-x: hidden;
 }
 
+/* Desktop: No scroll - all content fits in viewport */
+@media (min-width: 1024px) {
+  html, body {
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);

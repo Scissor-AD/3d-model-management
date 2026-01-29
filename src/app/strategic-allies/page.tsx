@@ -314,12 +314,12 @@ export default function StrategicAlliesPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen lg:h-screen lg:max-h-screen flex flex-col lg:overflow-hidden">
       <Navigation />
 
-      <main className="flex-1 pt-[var(--nav-height)]">
-        <section className="mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)]">
-          <div className="p-6 md:p-10">
+      <main className="flex-1 pt-[var(--nav-height)] lg:h-[calc(100vh-var(--nav-height))] lg:overflow-hidden">
+        <section className="mx-4 md:mx-8 my-6 md:my-10 lg:my-6 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)] lg:h-[calc(100vh-var(--nav-height)-3rem)] lg:overflow-hidden lg:flex lg:flex-col">
+          <div className="p-6 md:p-10 lg:p-8 lg:flex-1 lg:flex lg:flex-col lg:overflow-hidden">
             {/* Page Title */}
             <h1 className="section-heading mb-6">STRATEGIC ALLIES</h1>
 
@@ -395,7 +395,7 @@ export default function StrategicAlliesPage() {
             )}
 
             {/* Tab Content */}
-            <div className="animate-fade-in mb-10" key={activeTab}>
+            <div className="animate-fade-in mb-10 lg:mb-0 lg:flex-1 lg:overflow-auto" key={activeTab}>
               {renderContent()}
             </div>
           </div>
