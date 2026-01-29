@@ -31,7 +31,7 @@ const digitalProductionContent = {
       description: 'We turn laser scan point clouds into intelligent, purpose-built models that support confident design and construction. Typically developed in Revit, our building information models range from detailed existing conditions to predictive, connected digital twins. Our services span all sectors, with solutions customized to each project.',
     },
     {
-      title: 'SCAN TO CAD',
+      title: 'DIGITAL DESIGN PRODUCTION',
       description: 'Our digital twin implementations provide a reliable foundation for project planning and architectural resource tracking. These virtual environments deliver real-time insight, supporting smarter planning, coordination, and long-term asset management.',
     },
     {
