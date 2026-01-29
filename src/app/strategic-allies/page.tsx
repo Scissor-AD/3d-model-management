@@ -55,7 +55,7 @@ type CaseStudySection = 'problem' | 'approach' | 'final-solution';
 const caseStudySections: { key: CaseStudySection; label: string }[] = [
   { key: 'problem', label: 'PROBLEM' },
   { key: 'approach', label: 'APPROACH' },
-  { key: 'final-solution', label: 'FINAL SOLUTION' },
+  { key: 'final-solution', label: 'SOLUTION' },
 ];
 
 const caseStudyContent = {
@@ -68,7 +68,7 @@ const caseStudyContent = {
     content: 'Identify the inputs that will feed the Digital Twin what it needs for success.  This starts with a point cloud and can be layered with 3D Models, 2D details, asset libraries, IoT systems, sensor data and connecting to internal software systems.  Coordinating mass inputs can be a blocker to begin with, restrict the use case to only the inputs required to achieve success.',
   },
   finalSolution: {
-    title: 'FINAL SOLUTION',
+    title: 'SOLUTION',
     content: 'Assign an individual or a team to manage the process. Most inputs will require internal organizational coordination to functionally connect all the data points. Identify if external partners may be necessary to realize success and engage them early. Once the team is whole, share them in on the execution plan and schedule and get started.',
   },
 };
@@ -102,6 +102,25 @@ export default function StrategicAlliesPage() {
   const handleCaseStudySectionClick = (section: CaseStudySection) => {
     setActiveCaseStudySection(section);
     setActiveTab('case-study');
+  };
+
+  const getCurrentSectionIndex = () => {
+    if (!activeCaseStudySection) return 0;
+    return caseStudySections.findIndex(s => s.key === activeCaseStudySection);
+  };
+
+  const goToPrevSection = () => {
+    const currentIndex = getCurrentSectionIndex();
+    if (currentIndex > 0) {
+      setActiveCaseStudySection(caseStudySections[currentIndex - 1].key);
+    }
+  };
+
+  const goToNextSection = () => {
+    const currentIndex = getCurrentSectionIndex();
+    if (currentIndex < caseStudySections.length - 1) {
+      setActiveCaseStudySection(caseStudySections[currentIndex + 1].key);
+    }
   };
 
   const renderContent = () => {
@@ -192,13 +211,72 @@ export default function StrategicAlliesPage() {
             ? caseStudyContent.approach.content 
             : caseStudyContent.finalSolution.content;
         
+        const currentIndex = getCurrentSectionIndex();
+        const isFirst = currentIndex === 0;
+        const isLast = currentIndex === caseStudySections.length - 1;
+        
         return (
           <div className="space-y-8">
-            {/* Content based on selected subsection */}
-            <div className="max-w-3xl">
-              <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-                {currentContent}
-              </p>
+            {/* Content with navigation */}
+            <div className="flex items-start justify-between gap-6">
+              {/* Text content */}
+              <div className="max-w-3xl">
+                <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                  {currentContent}
+                </p>
+              </div>
+              
+              {/* Prev/Next Navigation - right aligned */}
+              <div className="flex-shrink-0 flex items-center gap-2">
+                {/* Progress indicator */}
+                <span className="text-xs font-display font-medium text-[var(--muted)] mr-2 hidden sm:inline">
+                  {currentIndex + 1} / {caseStudySections.length}
+                </span>
+                
+                {/* Previous button */}
+                <button
+                  onClick={goToPrevSection}
+                  disabled={isFirst}
+                  className={`group relative w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200 ${
+                    isFirst 
+                      ? 'border-[var(--border)] text-[var(--muted)] cursor-not-allowed opacity-40' 
+                      : 'border-[var(--foreground)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--surface)]'
+                  }`}
+                  aria-label="Previous section"
+                >
+                  <svg 
+                    className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                
+                {/* Next button */}
+                <button
+                  onClick={goToNextSection}
+                  disabled={isLast}
+                  className={`group relative w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200 ${
+                    isLast 
+                      ? 'border-[var(--border)] text-[var(--muted)] cursor-not-allowed opacity-40' 
+                      : 'border-[var(--foreground)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--surface)]'
+                  }`}
+                  aria-label="Next section"
+                >
+                  <svg 
+                    className="w-4 h-4 transition-transform group-hover:translate-x-0.5" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* Asset placeholder for case study */}
