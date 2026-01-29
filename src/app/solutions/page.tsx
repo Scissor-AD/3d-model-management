@@ -3,12 +3,11 @@
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 
-type TabKey = 'reality-capture' | 'model-authoring' | 'staff-augmentation' | 'equipment-software';
+type TabKey = 'reality-capture' | 'digital-production' | 'equipment-software';
 
 const tabs: { key: TabKey; label: string }[] = [
   { key: 'reality-capture', label: 'REALITY CAPTURE' },
-  { key: 'model-authoring', label: 'MODEL AUTHORING' },
-  { key: 'staff-augmentation', label: 'STAFF AUGMENTATION' },
+  { key: 'digital-production', label: 'DIGITAL PRODUCTION' },
   { key: 'equipment-software', label: 'EQUIPMENT + SOFTWARE' },
 ];
 
@@ -16,62 +15,36 @@ const realityCaptureContent = {
   sections: [
     {
       title: 'LASER SCANNING',
-      description: 'Our team works interchangeably with Leica and NavVis equipment depending on the task. Combining LiDAR and SLAM technologies provides the accuracy and scalability as required. Servicing all industries and sectors, previous projects have ranged between 500 to 20M square feet.',
+      description: 'Our laser scanning services integrate LiDAR and SLAM technologies to deliver accurate, scalable solutions for projects of all sizes. Serving all industries and sectors, our experience includes projects ranging from 500 to 20 million square feet.',
     },
     {
       title: 'PHOTOGRAMMETRY',
-      description: 'High fidelity optics and algorithms allow us to digitize space pixel by pixel. With both terrestrial and aerial capabilities we can capture both intricate details and mass volumetric studies. Primarily serving the conservation and asset cataloging sectors.',
+      description: 'We utilize advanced optics and computational methods to digitize physical spaces with exceptional fidelity. Combining terrestrial and aerial data capture, we support both fine-detail documentation and large-scale volumetric studies, primarily for conservation and asset cataloging applications.',
     },
   ],
 };
 
-const modelAuthoringContent = {
+const digitalProductionContent = {
   sections: [
     {
       title: 'SCAN TO BIM',
-      description: 'Using the point clouds from our scanning process, we generate intelligent models built to spec. Typically using Revit, we create a building information model starting with a base existing conditions model through to predictive and connected digital twins. We provide a solution to all sectors and customize to suit.',
+      description: 'We turn laser scan point clouds into intelligent, purpose-built models that support confident design and construction. Typically developed in Revit, our building information models range from detailed existing conditions to predictive, connected digital twins. Our services span all sectors, with solutions customized to each project.',
     },
     {
       title: 'SCAN TO CAD',
-      description: 'This service is in reality a Scan to BIM to CAD process which ensures the accuracy of our 2D outputs. Multiple formats available and adaptable to suit client internal drawings standards.',
+      description: 'Our digital twin implementations provide a reliable foundation for project planning and architectural resource tracking. These virtual environments deliver real-time insight, supporting smarter planning, coordination, and long-term asset management.',
     },
     {
-      title: 'LIBRARY DEVELOPMENT',
-      description: 'Digitizing furniture, fixtures, equipment and more with built in parametric flexibility and data rich models ready for scheduling and cataloging. Built on spec based on the end user requirements, perfectly paired for digital twin optimization.',
+      title: 'ASSET LIBRARY DEVELOPMENT',
+      description: 'We digitize furniture, fixtures, equipment, and more into parametric, data-rich models designed for scheduling and cataloguing. Each model is built to specification based on end-user requirements and is ideally suited for integration into optimized digital twin workflows.',
     },
     {
-      title: 'TEMPLATE DEVELOPMENT',
-      description: 'Start from scratch or further enhance existing Revit templates to dial in on internal workflows.',
+      title: 'DIGITAL TWIN IMPLEMENTATION',
+      description: 'Our digital twin implementations provide a reliable foundation for project planning and architectural resource tracking. These virtual environments deliver real-time insight, supporting smarter planning, coordination, and long-term asset management.',
     },
     {
-      title: 'ASSET TAGGING',
+      title: 'METADATA INCORPORATION',
       description: 'Combining point cloud and photographic information generated from the initial survey, the digital twin is enhanced through identifying, creating and tagging assets.',
-    },
-  ],
-};
-
-const staffAugmentationContent = {
-  sections: [
-    {
-      title: 'TEMPORARY CONTRACTORS',
-      description: 'Short term contracts to allow us to work alongside your team and contribute to your goals through time and effort based arrangement to allow for better financial optimization and flexibility.',
-    },
-  ],
-};
-
-const equipmentSoftwareContent = {
-  sections: [
-    {
-      title: 'LiDAR',
-      items: ['Leica RTC360', 'Leica BLK2GO', 'LEICA BLK360', 'NAVVIS VLX3'],
-    },
-    {
-      title: 'REGISTRATION',
-      items: ['LEICA REGISTER 360', 'NAVVIS IVION'],
-    },
-    {
-      title: 'UAV',
-      items: ['DJI Technology DRONE SUITE'],
     },
   ],
 };
@@ -97,52 +70,61 @@ export default function SolutionsPage() {
           </div>
         );
 
-      case 'model-authoring':
+      case 'digital-production':
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-            {modelAuthoringContent.sections.map((section) => (
-              <div key={section.title}>
-                <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
-                  {section.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-                  {section.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        );
-
-      case 'staff-augmentation':
-        return (
-          <div className="max-w-xl">
-            {staffAugmentationContent.sections.map((section) => (
-              <div key={section.title}>
-                <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
-                  {section.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-                  {section.description}
-                </p>
-              </div>
-            ))}
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+              {digitalProductionContent.sections.map((section) => (
+                <div key={section.title}>
+                  <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
+                    {section.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                    {section.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="text-base text-[var(--muted)] mt-8">
+              Have a project in mind that's not listed here? Contact us with a description of your goals, and we'll assess how we can support your vision.
+            </p>
           </div>
         );
 
       case 'equipment-software':
+        const logos = [
+          { src: '/logo-navvis.png', alt: 'NavVis', size: 'h-6 md:h-7' },
+          { src: '/logo-leica.png', alt: 'Leica', size: 'h-8 md:h-10' },
+          { src: '/logo-faro.png', alt: 'FARO', size: 'h-6 md:h-8' },
+          { src: '/logo-emesent.png', alt: 'Emesent', size: 'h-28 md:h-44' },
+          { src: '/logo-xgrids.png', alt: 'XGRIDS', size: 'h-28 md:h-44' },
+          { src: '/logo-revit.png', alt: 'Revit', size: 'h-14 md:h-20' },
+        ];
         return (
-          <div className="space-y-6">
-            {equipmentSoftwareContent.sections.map((section) => (
-              <div key={section.title}>
-                <p className="text-sm text-[var(--muted)] mb-2">
-                  <span className="font-semibold">{section.title}:</span>{' '}
-                  {section.items?.join(', ')}
-                </p>
+          <div className="flex flex-col md:flex-row gap-8 md:gap-12">
+            {/* Text content - left side on desktop */}
+            <div className="md:w-1/2">
+              <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                Our team employs a flexible, technology-agnostic approach, selecting scanning, registration, and UAV solutions based on project requirements. We work with LiDAR and SLAM systems from Leica, Emesent, FARO, XGRIDS, and NavVis, and register data within Revit, Archicad, and digital twin environments including TwinMaker, Omniverse, and Tandem. Open-format delivery in GLB and glTF, combined with UAV data capture using DJI drone technology, ensures compatibility across design, planning, and asset management workflows.
+              </p>
+            </div>
+            {/* Logos carousel - right side on desktop, below on mobile */}
+            <div className="md:w-1/2 flex items-center overflow-hidden">
+              <div className="flex animate-scroll-logos">
+                {/* First set of logos */}
+                {logos.map((logo, i) => (
+                  <div key={`logo-1-${i}`} className="flex-shrink-0 px-6 md:px-8 flex items-center">
+                    <img src={logo.src} alt={logo.alt} className={`${logo.size} object-contain opacity-80 hover:opacity-100 transition-opacity`} />
+                  </div>
+                ))}
+                {/* Duplicate set for seamless loop */}
+                {logos.map((logo, i) => (
+                  <div key={`logo-2-${i}`} className="flex-shrink-0 px-6 md:px-8 flex items-center">
+                    <img src={logo.src} alt={logo.alt} className={`${logo.size} object-contain opacity-80 hover:opacity-100 transition-opacity`} />
+                  </div>
+                ))}
               </div>
-            ))}
-            <p className="text-sm text-[var(--muted)] mt-6">
-              Depending on the project, we deploy the technology combination that best suits the scope.
-            </p>
+            </div>
           </div>
         );
 
@@ -156,7 +138,7 @@ export default function SolutionsPage() {
       <Navigation />
 
       <main className="flex-1 pt-[var(--nav-height)]">
-        <section className="border-l-4 border-[var(--border-dark)] mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)]">
+        <section className="mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)]">
           <div className="p-6 md:p-10">
             {/* Page Title */}
             <h1 className="section-heading mb-6">SOLUTIONS</h1>
@@ -185,9 +167,29 @@ export default function SolutionsPage() {
               {renderContent()}
             </div>
 
-            {/* Asset Placeholder */}
-            <div className="w-full aspect-video md:aspect-[21/9] bg-[#DADADA] flex items-center justify-center mt-8">
-              <span className="font-display font-bold text-[var(--foreground)]">Asset</span>
+            {/* Asset Image */}
+            <div className="w-full mt-8">
+              <img
+                src={
+                  activeTab === 'digital-production' 
+                    ? '/digital-production-hero.png' 
+                    : activeTab === 'equipment-software'
+                    ? '/equipment-hero.png'
+                    : '/solutions-hero.png'
+                }
+                alt={
+                  activeTab === 'digital-production' 
+                    ? '3D BIM model of industrial facility' 
+                    : activeTab === 'equipment-software'
+                    ? 'Laser scanner on tripod in industrial facility'
+                    : '3D model scan of construction site with exposed roof trusses'
+                }
+                className={`w-full h-auto md:aspect-[21/9] ${
+                  activeTab === 'digital-production'
+                    ? 'object-contain aspect-[4/3] sm:aspect-video md:object-cover'
+                    : 'object-cover aspect-[16/9] sm:aspect-video'
+                }`}
+              />
             </div>
           </div>
         </section>

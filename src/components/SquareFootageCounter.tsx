@@ -69,13 +69,15 @@ export default function SquareFootageCounter({
         requestAnimationFrame(updateCounter);
       } else {
         setCount(targetValue);
-        // Start slow counting after reaching target
-        startSlowCount();
+        // Start slow counting after reaching target (only if rate > 0)
+        if (slowIncrementRate > 0) {
+          startSlowCount();
+        }
       }
     };
 
     requestAnimationFrame(updateCounter);
-  }, [duration, targetValue, startSlowCount]);
+  }, [duration, targetValue, startSlowCount, slowIncrementRate]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -109,18 +111,20 @@ export default function SquareFootageCounter({
   return (
     <div 
       ref={counterRef}
-      className="flex flex-col items-center gap-2 py-8 md:py-12"
+      className="flex flex-col items-center gap-2 py-6 md:py-8"
     >
-      <div className="flex items-baseline gap-2">
+      <div className={`flex items-baseline ${suffix ? 'gap-2' : ''}`}>
         <span 
-          className="font-display text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight tabular-nums"
+          className="font-display text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight tabular-nums transition-all duration-100"
           style={{ fontVariantNumeric: 'tabular-nums' }}
         >
           {formatNumber(count)}
         </span>
-        <span className="font-display text-xl md:text-2xl lg:text-3xl text-[var(--muted)] font-medium">
-          {suffix}
-        </span>
+        {suffix && (
+          <span className="font-display text-lg md:text-xl lg:text-2xl text-[var(--muted)] font-medium">
+            {suffix}
+          </span>
+        )}
       </div>
       <span className="font-display text-xs md:text-sm tracking-[0.2em] text-[var(--muted)]">
         {label}

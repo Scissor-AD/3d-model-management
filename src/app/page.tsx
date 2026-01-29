@@ -37,13 +37,42 @@ export default function Home() {
             <AnimatedTagline />
           </div>
           
-          {/* Square Footage Counter */}
-          <div className="relative z-10 mt-8 md:mt-6 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-            <SquareFootageCounter 
-              targetValue={12500000}
-              duration={2500}
-              label="SQUARE FEET CAPTURED"
-            />
+          {/* Square Footage Counter - Primary */}
+          <div className="relative z-10 mt-8 md:mt-6 w-full max-w-5xl">
+            <div className="animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+              <SquareFootageCounter 
+                targetValue={12500000}
+                duration={2500}
+                label="SQUARE FEET CAPTURED"
+              />
+            </div>
+          </div>
+          
+          {/* Delivery Stats Counters - Secondary */}
+          <div className="relative z-10 mt-2 md:mt-4 w-full max-w-3xl">
+            <div className="grid grid-cols-2 gap-8 md:gap-16">
+              {/* Projects Delivered Counter */}
+              <div className="animate-fade-in-up" style={{ animationDelay: '0.7s' }}>
+                <SquareFootageCounter 
+                  targetValue={850}
+                  duration={2000}
+                  label="PROJECTS DELIVERED"
+                  suffix=""
+                  slowIncrementRate={0}
+                />
+              </div>
+              
+              {/* Models Delivered Counter */}
+              <div className="animate-fade-in-up" style={{ animationDelay: '0.9s' }}>
+                <SquareFootageCounter 
+                  targetValue={2400}
+                  duration={2200}
+                  label="MODELS DELIVERED"
+                  suffix=""
+                  slowIncrementRate={0}
+                />
+              </div>
+            </div>
           </div>
         </section>
 

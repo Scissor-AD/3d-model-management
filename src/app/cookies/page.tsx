@@ -6,7 +6,7 @@ export default function CookiePolicyPage() {
       <Navigation />
 
       <main className="flex-1 pt-[var(--nav-height)]">
-        <section className="border-l-4 border-[var(--border-dark)] mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)]">
+        <section className="mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)]">
           <div className="p-6 md:p-10 max-w-4xl">
             <h1 className="section-heading mb-8">COOKIE POLICY</h1>
             

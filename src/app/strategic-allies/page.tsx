@@ -160,7 +160,7 @@ export default function StrategicAlliesPage() {
       <Navigation />
 
       <main className="flex-1 pt-[var(--nav-height)]">
-        <section className="border-l-4 border-[var(--border-dark)] mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)]">
+        <section className="mx-4 md:mx-8 my-6 md:my-10 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)]">
           <div className="p-6 md:p-10">
             {/* Page Title */}
             <h1 className="section-heading mb-6">STRATEGIC ALLIES</h1>

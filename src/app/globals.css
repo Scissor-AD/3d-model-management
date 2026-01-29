@@ -344,3 +344,23 @@ input:focus, select:focus, textarea:focus {
     linear-gradient(to bottom, var(--border) 1px, transparent 1px);
   background-size: 40px 40px;
 }
+
+/* Logo carousel animation */
+@keyframes scrollLogos {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-logos {
+  display: flex;
+  width: max-content;
+  animation: scrollLogos 12s linear infinite;
+}
+
+.animate-scroll-logos:hover {
+  animation-play-state: paused;
+}
