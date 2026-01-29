@@ -3,15 +3,35 @@
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 
-type TabKey = 'about' | 'pilot-project' | 'conclusion';
+type TabKey = 'about' | 'digital-twin' | 'case-study' | 'work-with-us';
 
 const tabs: { key: TabKey; label: string }[] = [
   { key: 'about', label: 'ABOUT' },
-  { key: 'pilot-project', label: 'PILOT PROJECT' },
-  { key: 'conclusion', label: 'CONCLUSION' },
+  { key: 'digital-twin', label: 'DIGITAL TWIN' },
+  { key: 'case-study', label: 'CASE STUDY' },
+  { key: 'work-with-us', label: 'WORK WITH US' },
 ];
 
 const aboutContent = {
+  intro: {
+    title: '',
+    paragraphs: [
+      'We approach every engagement as a partnership, prioritizing long-term relationships over transactional work. By building trusted alliances with our clients and collaborators, we develop a deep understanding of operational needs, standards, and goals—allowing us to work more efficiently and proactively over time.',
+      'This partnership-driven model results are faster service delivery, significant cost reductions and increased confidence in outcomes. Through consistency, alignment, and shared accountability, our team aims to support reliable execution and sustained value across projects.',
+    ],
+  },
+  partners: {
+    title: 'TECHNOLOGY PARTNERS',
+    bullets: [
+      'Leading laser scanning and reality capture hardware manufacturers',
+      'Advanced point cloud processing and modeling software providers',
+      'IoT and sensor integration specialists',
+      'Cloud platform and data management solutions',
+    ],
+  },
+};
+
+const digitalTwinContent = {
   whatIs: {
     title: 'WHAT IS A DIGITAL TWIN?',
     paragraphs: [
@@ -30,55 +50,94 @@ const aboutContent = {
   },
 };
 
-const pilotProjectContent = {
-  steps: [
-    {
-      step: 1,
-      title: 'USE CASE',
-      description: 'Start with identifying organizational priorities and cross reference that with the opportunities a digital twin provides. Select one use case that can deliver measurable value. It may be a partial zone of a space or a single object. Define what success looks like as a result and map the steps into a project schedule and execution plan.',
-    },
-    {
-      step: 2,
-      title: 'FOUNDATIONAL DATA',
-      description: 'Identify the inputs that will feed the Digital Twin what it needs for success. This starts with a point cloud and can be layered with 3D Models, 2D details, asset libraries, IoT systems, sensor data and connecting to internal software systems. Coordinating mass inputs can be a blocker to begin with, restrict the use case to only the inputs required to achieve success.',
-    },
-    {
-      step: 3,
-      title: 'STAKEHOLDERS',
-      description: 'Assign an individual or a team to manage the process. Most inputs will require internal organizational coordination to functionally connect all the data points. Identify if external partners may be necessary to realize success and engage them early. Once the team is whole, share them in on the execution plan and schedule and get started.',
-    },
-    {
-      step: 4,
-      title: 'ENGAGE',
-      description: 'Start small by identifying the one aspect of your plan that can be fully realized and delivered. Engage the team, begin the process and monitor the development. Ensure the data points are connected, live and reporting correctly. Provide access to the hosting platform of choice to interact with the digital twin, and share it with the collaboration partners and stakeholders and flex the process to uncover defects or illuminate unknown synergies and insights.',
-    },
-    {
-      step: 5,
-      title: 'MEASURE SUCCESS AND COMMUNICATE VALUE',
-      description: 'Start small by identifying the one aspect of your plan that can be fully realized and delivered. Engage the team, begin the process and monitor the development. Ensure the data points are connected, live and reporting correctly. Provide access to the hosting platform of choice to interact with the digital twin, and share it with the collaboration partners and stakeholders and flex the process to uncover defects or illuminate unknown synergies and insights.',
-    },
-  ],
+type CaseStudySection = 'problem' | 'approach' | 'final-solution';
+
+const caseStudySections: { key: CaseStudySection; label: string }[] = [
+  { key: 'problem', label: 'PROBLEM' },
+  { key: 'approach', label: 'APPROACH' },
+  { key: 'final-solution', label: 'FINAL SOLUTION' },
+];
+
+const caseStudyContent = {
+  problem: {
+    title: 'PROBLEM',
+    content: 'Start with identifying organizational priorities and cross reference that with the opportunities a digital twin provides. Select one use case that can deliver measurable value. It may be a partial zone of a space or a single object. Define what success looks like as a result and map the steps into a project schedule and execution plan.',
+  },
+  approach: {
+    title: 'APPROACH',
+    content: 'Identify the inputs that will feed the Digital Twin what it needs for success.  This starts with a point cloud and can be layered with 3D Models, 2D details, asset libraries, IoT systems, sensor data and connecting to internal software systems.  Coordinating mass inputs can be a blocker to begin with, restrict the use case to only the inputs required to achieve success.',
+  },
+  finalSolution: {
+    title: 'FINAL SOLUTION',
+    content: 'Assign an individual or a team to manage the process. Most inputs will require internal organizational coordination to functionally connect all the data points. Identify if external partners may be necessary to realize success and engage them early. Once the team is whole, share them in on the execution plan and schedule and get started.',
+  },
 };
 
-const conclusionContent = {
-  paragraph: 'Most companies will not have the internal resources to embark on a Digital Twin endeavor. 3D Model Management is specifically configured to provide the additional hands, equipment and knowledge base that will enable to you to start, to scale and to maximize your digital transformation process. Connect with us, early in the process, to help you define your successful Pilot Project.',
+const workWithUsContent = {
+  intro: {
+    paragraph: 'Most companies will not have the internal resources to embark on a Digital Twin endeavor. 3D Model Management is specifically configured to provide the additional hands, equipment and knowledge base that will enable you to start, to scale and to maximize your digital transformation process. Connect with us, early in the process, to help you define your successful Pilot Project.',
+  },
+  steps: {
+    title: 'HOW TO GET STARTED',
+    items: [
+      {
+        step: 1,
+        title: 'INITIAL CONSULTATION',
+        description: 'Connect with our team to discuss your organizational priorities and explore how our strategic alliances can address your specific needs.',
+      },
+      {
+        step: 2,
+        title: 'SOLUTION DESIGN',
+        description: 'We work with you to identify the right combination of technologies and partners to deliver a tailored solution for your project.',
+      },
+      {
+        step: 3,
+        title: 'PILOT PROJECT',
+        description: 'Start with a focused pilot project that demonstrates value and builds the foundation for broader digital transformation.',
+      },
+    ],
+  },
 };
 
 export default function StrategicAlliesPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('about');
+  const [activeCaseStudySection, setActiveCaseStudySection] = useState<CaseStudySection | null>(null);
+  const [caseStudyExpanded, setCaseStudyExpanded] = useState(false);
+  const [contactDrawerOpen, setContactDrawerOpen] = useState(false);
+
+  const handleTabClick = (tabKey: TabKey) => {
+    if (tabKey === 'case-study') {
+      setCaseStudyExpanded(!caseStudyExpanded);
+      if (!caseStudyExpanded) {
+        setActiveTab('case-study');
+        setActiveCaseStudySection('problem'); // Default to first subsection
+      }
+    } else {
+      setActiveTab(tabKey);
+      setCaseStudyExpanded(false);
+      setActiveCaseStudySection(null);
+    }
+  };
+
+  const handleCaseStudySectionClick = (section: CaseStudySection) => {
+    setActiveCaseStudySection(section);
+    setActiveTab('case-study');
+  };
 
   const renderContent = () => {
     switch (activeTab) {
       case 'about':
         return (
           <div className="space-y-8">
-            {/* What is a Digital Twin */}
+            {/* Intro */}
             <div>
-              <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
-                {aboutContent.whatIs.title}
-              </h3>
+              {aboutContent.intro.title && (
+                <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
+                  {aboutContent.intro.title}
+                </h3>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {aboutContent.whatIs.paragraphs.map((para, idx) => (
+                {aboutContent.intro.paragraphs.map((para, idx) => (
                   <p key={idx} className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
                     {para}
                   </p>
@@ -86,13 +145,13 @@ export default function StrategicAlliesPage() {
               </div>
             </div>
 
-            {/* Why Create */}
+            {/* Partners */}
             <div>
               <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
-                {aboutContent.whyCreate.title}
+                {aboutContent.partners.title}
               </h3>
               <ul className="space-y-2">
-                {aboutContent.whyCreate.bullets.map((bullet, idx) => (
+                {aboutContent.partners.bullets.map((bullet, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-sm leading-relaxed">
                     <span className="mt-1.5 w-1.5 h-1.5 bg-[var(--foreground)] rounded-full flex-shrink-0" />
                     {bullet}
@@ -103,50 +162,110 @@ export default function StrategicAlliesPage() {
           </div>
         );
 
-      case 'pilot-project':
+      case 'digital-twin':
         return (
           <div className="space-y-8">
-            {/* Steps 1-2 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-              {pilotProjectContent.steps.slice(0, 2).map((step) => (
-                <div key={step.step}>
-                  <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
-                    STEP {step.step} - {step.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-                    {step.description}
+            {/* What is a Digital Twin */}
+            <div>
+              <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
+                {digitalTwinContent.whatIs.title}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {digitalTwinContent.whatIs.paragraphs.map((para, idx) => (
+                  <p key={idx} className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                    {para}
                   </p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
-            {/* First Asset */}
-            <div className="w-full aspect-video md:aspect-[21/9] bg-[#DADADA] flex items-center justify-center">
-              <span className="font-display font-bold text-[var(--foreground)]">Asset</span>
+            {/* Why Create */}
+            <div>
+              <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
+                {digitalTwinContent.whyCreate.title}
+              </h3>
+              <ul className="space-y-2">
+                {digitalTwinContent.whyCreate.bullets.map((bullet, idx) => (
+                  <li key={idx} className="flex items-start gap-3 text-sm leading-relaxed">
+                    <span className="mt-1.5 w-1.5 h-1.5 bg-[var(--foreground)] rounded-full flex-shrink-0" />
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {/* Steps 3-5 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-              {pilotProjectContent.steps.slice(2).map((step) => (
-                <div key={step.step}>
-                  <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
-                    STEP {step.step} - {step.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-                    {step.description}
-                  </p>
-                </div>
-              ))}
+            {/* Digital Twin Asset */}
+            <div className="w-full aspect-[4/3] md:aspect-[2/1] overflow-hidden rounded-sm">
+              <img 
+                src="/digital-twin-asset.png" 
+                alt="Digital Twin visualization showing a building with its virtual replica"
+                className="w-full h-full object-cover object-top"
+              />
             </div>
           </div>
         );
 
-      case 'conclusion':
+      case 'case-study':
+        const currentContent = activeCaseStudySection === 'problem' 
+          ? caseStudyContent.problem.content 
+          : activeCaseStudySection === 'approach' 
+            ? caseStudyContent.approach.content 
+            : caseStudyContent.finalSolution.content;
+        
         return (
-          <div className="max-w-3xl">
-            <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-              {conclusionContent.paragraph}
-            </p>
+          <div className="space-y-8">
+            {/* Content based on selected subsection */}
+            <div className="max-w-3xl">
+              <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                {currentContent}
+              </p>
+            </div>
+
+            {/* Asset placeholder for case study */}
+            <div className="w-full aspect-[4/3] md:aspect-[2/1] bg-[#DADADA] flex items-center justify-center">
+              <span className="font-display font-bold text-[var(--foreground)]">Asset</span>
+            </div>
+          </div>
+        );
+
+      case 'work-with-us':
+        return (
+          <div className="space-y-8">
+            {/* Intro */}
+            <div className="max-w-3xl">
+              <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                {workWithUsContent.intro.paragraph}
+              </p>
+            </div>
+
+            {/* Steps */}
+            <div>
+              <h3 className="font-display text-sm font-semibold tracking-wide mb-6">
+                {workWithUsContent.steps.title}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+                {workWithUsContent.steps.items.map((item) => (
+                  <div key={item.step}>
+                    <h4 className="font-display text-sm font-semibold tracking-wide mb-4">
+                      STEP {item.step} - {item.title}
+                    </h4>
+                    <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                      {item.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div>
+              <button
+                onClick={() => setContactDrawerOpen(true)}
+                className="btn-primary font-display text-sm tracking-wide"
+              >
+                GET IN TOUCH
+              </button>
+            </div>
           </div>
         );
 
@@ -166,36 +285,184 @@ export default function StrategicAlliesPage() {
             <h1 className="section-heading mb-6">STRATEGIC ALLIES</h1>
 
             {/* Tabs */}
-            <div className="border-b border-[var(--border)] mb-6 overflow-x-auto">
-              <nav className="flex gap-4 md:gap-8 min-w-max">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key)}
-                    className={`pb-3 font-display text-xs md:text-sm font-medium tracking-wide transition-all whitespace-nowrap ${
-                      activeTab === tab.key
-                        ? 'font-bold border-b-2 border-[var(--foreground)]'
-                        : 'text-[var(--muted)] hover:text-[var(--foreground)]'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+            <div className="border-b border-[var(--border)] mb-6">
+              {/* Desktop: Main tabs with subsections right-aligned */}
+              <nav 
+                className="flex items-center justify-between"
+              >
+                {/* Main Tabs */}
+                <div className="flex gap-4 md:gap-8 items-center">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => handleTabClick(tab.key)}
+                      className={`pb-3 font-display text-xs md:text-sm font-medium tracking-wide transition-all whitespace-nowrap ${
+                        activeTab === tab.key
+                          ? 'font-bold border-b-2 border-[var(--foreground)]'
+                          : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Case Study Subsections - Desktop: right-aligned */}
+                {caseStudyExpanded && (
+                  <div className="hidden md:flex items-center gap-1">
+                    {caseStudySections.map((section, idx) => (
+                      <button
+                        key={section.key}
+                        onClick={() => handleCaseStudySectionClick(section.key)}
+                        className={`pb-3 px-3 font-display text-sm font-medium tracking-wide transition-all whitespace-nowrap relative ${
+                          activeCaseStudySection === section.key
+                            ? 'text-[var(--foreground)]'
+                            : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                        }`}
+                      >
+                        {section.label}
+                        {activeCaseStudySection === section.key && (
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--foreground)]" />
+                        )}
+                        {idx < caseStudySections.length - 1 && (
+                          <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-3 bg-[var(--border)]" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </nav>
             </div>
+
+            {/* Mobile: Case Study Subsections as segmented control */}
+            {caseStudyExpanded && (
+              <div className="md:hidden mb-6 -mt-3">
+                <div className="flex bg-[var(--surface-elevated)] rounded-full p-1 gap-1">
+                  {caseStudySections.map((section) => (
+                    <button
+                      key={section.key}
+                      onClick={() => handleCaseStudySectionClick(section.key)}
+                      className={`flex-1 py-2 px-3 font-display text-xs font-medium tracking-wide transition-all whitespace-nowrap rounded-full ${
+                        activeCaseStudySection === section.key
+                          ? 'bg-[var(--foreground)] text-[var(--surface)]'
+                          : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                      }`}
+                    >
+                      {section.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Tab Content */}
             <div className="animate-fade-in mb-10" key={activeTab}>
               {renderContent()}
             </div>
-
-            {/* Asset Placeholder */}
-            <div className="w-full aspect-video md:aspect-[21/9] bg-[#DADADA] flex items-center justify-center mt-8">
-              <span className="font-display font-bold text-[var(--foreground)]">Asset</span>
-            </div>
           </div>
         </section>
       </main>
+
+      {/* Contact Drawer */}
+      {contactDrawerOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            onClick={() => setContactDrawerOpen(false)}
+          />
+          
+          {/* Drawer */}
+          <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
+            {/* Drag indicator */}
+            <div className="flex justify-center py-3">
+              <div className="w-12 h-1 bg-white/30 rounded-full" />
+            </div>
+            
+            <div className="bg-[var(--foreground)] text-[var(--surface)] rounded-t-3xl overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 md:px-10 pt-6 pb-4">
+                <div>
+                  <h2 className="font-display text-xl md:text-2xl font-bold tracking-wide">LET&apos;S CONNECT</h2>
+                  <p className="text-sm text-[var(--surface)]/60 mt-1">Start your digital transformation journey</p>
+                </div>
+                <button
+                  onClick={() => setContactDrawerOpen(false)}
+                  className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-white/10 rounded-full transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {/* Content */}
+              <div className="px-6 md:px-10 pb-8 md:pb-10 max-h-[70vh] overflow-y-auto">
+                <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); setContactDrawerOpen(false); }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">NAME</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors"
+                        placeholder="Your name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">COMPANY</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors"
+                        placeholder="Your company"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">EMAIL</label>
+                      <input 
+                        type="email" 
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors"
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">PHONE</label>
+                      <input 
+                        type="tel" 
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors"
+                        placeholder="(555) 000-0000"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">MESSAGE</label>
+                    <textarea 
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors min-h-[100px] resize-none"
+                      placeholder="Tell us about your project..."
+                    />
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                    <button
+                      type="submit"
+                      className="flex-1 bg-[var(--surface)] text-[var(--foreground)] font-display text-sm font-semibold tracking-wide py-4 px-6 hover:bg-[var(--surface)]/90 transition-colors"
+                    >
+                      SEND MESSAGE
+                    </button>
+                    <a
+                      href="mailto:contact@3dmodelmanagement.com"
+                      className="flex-1 border border-white/30 text-[var(--surface)] font-display text-sm font-medium tracking-wide py-4 px-6 text-center hover:bg-white/10 transition-colors"
+                    >
+                      EMAIL DIRECTLY
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

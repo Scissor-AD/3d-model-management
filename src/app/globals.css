@@ -109,6 +109,16 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--accent-secondary);
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Form Styles */
 input, select, textarea {
   font-family: var(--font-body);
@@ -289,6 +299,21 @@ input:focus, select:focus, textarea:focus {
   animation: fadeIn 0.4s ease both;
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /* Stagger animations */
 .stagger-1 { animation-delay: 0.1s; }
 .stagger-2 { animation-delay: 0.2s; }
@@ -363,4 +388,18 @@ input:focus, select:focus, textarea:focus {
 
 .animate-scroll-logos:hover {
   animation-play-state: paused;
+}
+
+/* Slide in from right animation for drawer */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

@@ -52,56 +52,38 @@ export default function AboutPage() {
       <Navigation />
 
       <main className="flex-1 pt-[var(--nav-height)]">
-        <section className="min-h-[calc(100vh-var(--nav-height))]">
-          <div className="p-6 md:p-10 lg:p-12 max-w-5xl">
-            {/* About Us Section */}
-            <div className="mb-12">
+        <section className="min-h-[calc(100vh-var(--nav-height))] flex flex-col">
+          {/* Desktop: Two-column layout, Mobile: Single column */}
+          <div className="flex-1 flex flex-col lg:flex-row">
+            {/* About Us - Right on desktop, First on mobile */}
+            <div className="p-6 md:p-10 lg:p-12 lg:w-1/2 lg:order-2">
               <h2 className="font-display text-sm font-bold tracking-wide mb-6">ABOUT US</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                <p className="text-sm text-[var(--foreground)] leading-relaxed text-justify">
-                  3D Model Management is a solutions provider servicing the task of digitizing our environments. 
-                  From ideation to virtual replica, we provide a vertically integrated solution from start to finish. 
-                  With solutions for building, for operating, and for conservation among others, we provide a 
-                  bespoke delivery tailored to fit.
+              <div className="space-y-6">
+                <p className="text-sm text-[var(--foreground)] leading-relaxed">
+                  3D Model Management (3DMM), a technology-driven consultancy delivering large-scale reality capture, spatial data, and BIM advisory services to the AEC and owner-operator market. Built the firm to serve organizations that rely on accurate, scalable spatial intelligence to coordinate, manage, and optimize complex physical environments.
                 </p>
-                <p className="text-sm text-[var(--foreground)] leading-relaxed text-justify">
-                  Our objective is to provide the framework and resources to achieve our clients goals. We achieve 
-                  this through using our toolsets of hardware and software capabilities as well as our knowledge 
-                  base of subject matter expertise and experience in delivering parallel results across industries.
+                <p className="text-sm text-[var(--foreground)] leading-relaxed">
+                  3DMM specializes in fast, high-fidelity reality capture and enterprise-grade BIM strategy for non-traditional clients, including portfolio-scale owner-operators and high-growth organizations seeking to leverage design technology for improved decision-making, cost efficiency, and operational insight. The practice focuses on translating spatial data into actionable intelligence. Supporting footprint optimization, program standardization, and data-driven capital planning across diverse building typologies.
                 </p>
-              </div>
-
-              <h3 className="font-display text-sm font-bold tracking-wide mb-6">LOCATIONS</h3>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <p className="text-sm font-medium mb-1">NYC HQ:</p>
-                  <p className="text-sm text-[var(--foreground)]">108 Bowery, Suite 3, New York, NY 10013</p>
-                </div>
-                
-                <div>
-                  <p className="text-sm font-medium mb-1">Lower East Side:</p>
-                  <p className="text-sm text-[var(--foreground)]">55 Canal Street, FL2, New York, NY 10002</p>
-                </div>
               </div>
             </div>
 
-            {/* Contact Form Section */}
-            <div className="border-t border-[var(--border)] pt-10">
+            {/* Contact Form - Left on desktop, Second on mobile */}
+            <div className="p-6 md:p-10 lg:p-12 lg:w-1/2 lg:order-1 lg:border-r lg:border-[var(--border)] border-t lg:border-t-0 border-[var(--border)]">
               <h2 className="font-display text-sm font-bold tracking-wide mb-6">CONTACT</h2>
               
               <p className="text-sm text-[var(--foreground)] mb-6 leading-relaxed">
                 Complete the form below for a complimentary consultation or email us directly at{' '}
                 <a 
-                  href="mailto:info@3dmodelmanagement.com" 
+                  href="mailto:info@3dmodelmanagement.co" 
                   className="underline hover:text-[var(--muted)] transition-colors"
                 >
-                  info@3dmodelmanagement.com
+                  info@3dmodelmanagement.co
                 </a>
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -150,21 +132,6 @@ export default function AboutPage() {
                   />
                 </div>
 
-                {/* Newsletter Checkbox */}
-                <div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    id="signUpForNews"
-                    name="signUpForNews"
-                    checked={formData.signUpForNews}
-                    onChange={handleInputChange}
-                    className="w-4 h-4 border border-[var(--border)] accent-[var(--foreground)]"
-                  />
-                  <label htmlFor="signUpForNews" className="text-sm text-[var(--muted)]">
-                    Sign up for news and updates
-                  </label>
-                </div>
-
                 {/* Subject */}
                 <div>
                   <label htmlFor="subject" className="block text-sm text-[var(--muted)] mb-2">
@@ -197,6 +164,21 @@ export default function AboutPage() {
                   />
                 </div>
 
+                {/* Newsletter Checkbox */}
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="signUpForNews"
+                    name="signUpForNews"
+                    checked={formData.signUpForNews}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 border border-[var(--border)] accent-[var(--foreground)]"
+                  />
+                  <label htmlFor="signUpForNews" className="text-sm text-[var(--muted)]">
+                    Sign up for news and updates
+                  </label>
+                </div>
+
                 {/* Submit Button */}
                 <button
                   type="submit"
@@ -206,6 +188,24 @@ export default function AboutPage() {
                   {isSubmitting ? 'SUBMITTING...' : submitStatus === 'success' ? 'SUBMITTED!' : 'SUBMIT'}
                 </button>
               </form>
+            </div>
+          </div>
+
+          {/* Footer - Locations & Legal */}
+          <div className="border-t border-[var(--border)] p-6 md:p-10 lg:p-12 flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+            <div>
+              <h3 className="font-display text-sm font-bold tracking-wide mb-4">LOCATIONS</h3>
+              <p className="text-sm text-[var(--foreground)]">
+                New York | Jacksonville | Seattle | Cordoba
+              </p>
+            </div>
+            <div className="lg:text-right">
+              <h3 className="font-display text-sm font-bold tracking-wide mb-4">LEGAL</h3>
+              <div className="flex flex-wrap gap-4 lg:justify-end">
+                <a href="/privacy" className="text-sm text-[var(--foreground)] hover:text-[var(--muted)] transition-colors">Privacy Policy</a>
+                <a href="/terms" className="text-sm text-[var(--foreground)] hover:text-[var(--muted)] transition-colors">Terms of Service</a>
+                <a href="/cookies" className="text-sm text-[var(--foreground)] hover:text-[var(--muted)] transition-colors">Cookie Policy</a>
+              </div>
             </div>
           </div>
         </section>
