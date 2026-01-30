@@ -61,7 +61,7 @@ export default function AboutPage() {
               
               <div className="space-y-6">
                 <p className="text-sm text-[var(--foreground)] leading-relaxed">
-                  3D Model Management (3DMM), a technology-driven consultancy delivering large-scale reality capture, spatial data, and BIM advisory services to the AEC and owner-operator market. Built the firm to serve organizations that rely on accurate, scalable spatial intelligence to coordinate, manage, and optimize complex physical environments.
+                  3D Model Management (3DMM), is a technology-driven consultancy delivering large-scale reality capture, spatial data, and BIM advisory services to the AEC and owner-operator market. Founded in 2018 to serve organizations that rely on accurate, scalable spatial intelligence to coordinate, manage, and optimize complex physical environments.
                 </p>
                 <p className="text-sm text-[var(--foreground)] leading-relaxed">
                   3DMM specializes in fast, high-fidelity reality capture and enterprise-grade BIM strategy for non-traditional clients, including portfolio-scale owner-operators and high-growth organizations seeking to leverage design technology for improved decision-making, cost efficiency, and operational insight. The practice focuses on translating spatial data into actionable intelligence. Supporting footprint optimization, program standardization, and data-driven capital planning across diverse building typologies.
