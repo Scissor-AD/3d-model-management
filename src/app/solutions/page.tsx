@@ -191,11 +191,7 @@ export default function SolutionsPage() {
                     ? 'Laser scanner on tripod in industrial facility'
                     : '3D model scan of construction site with exposed roof trusses'
                 }
-                className={`w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full ${
-                  activeTab === 'digital-production'
-                    ? 'object-contain aspect-[4/3] sm:aspect-video md:object-cover lg:object-contain'
-                    : 'object-cover aspect-[16/9] sm:aspect-video lg:object-contain'
-                }`}
+                className="w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full object-cover aspect-[16/9] sm:aspect-video lg:object-contain"
               />
             </div>
           </div>
