@@ -21,7 +21,7 @@ export default function Logo3DCarousel({
   const containerRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
 
   const itemCount = logos.length;
