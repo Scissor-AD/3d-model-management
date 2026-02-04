@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
+import Logo3DCarousel from '@/components/Logo3DCarousel';
 
 type TabKey = 'reality-capture' | 'digital-production' | 'equipment-software';
 
@@ -100,12 +101,12 @@ export default function SolutionsPage() {
 
       case 'equipment-software':
         const logos = [
-          { src: '/logo-navvis.png', alt: 'NavVis', size: 'h-6 md:h-7' },
-          { src: '/logo-leica.png', alt: 'Leica', size: 'h-8 md:h-10' },
-          { src: '/logo-faro.png', alt: 'FARO', size: 'h-6 md:h-8' },
-          { src: '/logo-emesent.png', alt: 'Emesent', size: 'h-28 md:h-44' },
-          { src: '/logo-xgrids.png', alt: 'XGRIDS', size: 'h-28 md:h-44' },
-          { src: '/logo-revit.png', alt: 'Revit', size: 'h-14 md:h-20' },
+          { src: '/logo-navvis.png', alt: 'NavVis' },
+          { src: '/logo-leica.png', alt: 'Leica' },
+          { src: '/logo-faro.png', alt: 'FARO' },
+          { src: '/logo-emesent.png', alt: 'Emesent' },
+          { src: '/logo-xgrids.png', alt: 'XGRIDS' },
+          { src: '/logo-revit.png', alt: 'Revit' },
         ];
         return (
           <div className="flex flex-col md:flex-row gap-8 md:gap-12">
@@ -115,22 +116,9 @@ export default function SolutionsPage() {
                 Our team employs a flexible, technology-agnostic approach, selecting scanning, registration, and UAV solutions based on project requirements. We work with LiDAR and SLAM systems from Leica, Emesent, FARO, XGRIDS, and NavVis, and register data within Revit, Archicad, and digital twin environments including TwinMaker, Omniverse, and Tandem. Open-format delivery in GLB and glTF, combined with UAV data capture using DJI drone technology, ensures compatibility across design, planning, and asset management workflows.
               </p>
             </div>
-            {/* Logos carousel - right side on desktop, below on mobile */}
-            <div className="md:w-1/2 flex items-center overflow-hidden">
-              <div className="flex animate-scroll-logos">
-                {/* First set of logos */}
-                {logos.map((logo, i) => (
-                  <div key={`logo-1-${i}`} className="flex-shrink-0 px-6 md:px-8 flex items-center">
-                    <img src={logo.src} alt={logo.alt} className={`${logo.size} object-contain opacity-80 hover:opacity-100 transition-opacity`} />
-                  </div>
-                ))}
-                {/* Duplicate set for seamless loop */}
-                {logos.map((logo, i) => (
-                  <div key={`logo-2-${i}`} className="flex-shrink-0 px-6 md:px-8 flex items-center">
-                    <img src={logo.src} alt={logo.alt} className={`${logo.size} object-contain opacity-80 hover:opacity-100 transition-opacity`} />
-                  </div>
-                ))}
-              </div>
+            {/* 3D Logos carousel - right side on desktop, below on mobile */}
+            <div className="md:w-1/2">
+              <Logo3DCarousel logos={logos} autoRotate={true} rotationSpeed={0.25} />
             </div>
           </div>
         );
