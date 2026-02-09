@@ -33,8 +33,8 @@ const equipmentLogos = [
   { src: '/logo-navvis.png', alt: 'NavVis' },
   { src: '/logo-leica.png', alt: 'Leica' },
   { src: '/logo-faro.png', alt: 'FARO' },
-  { src: '/logo-emesent.png', alt: 'Emesent' },
-  { src: '/logo-xgrids.png', alt: 'XGRIDS' },
+  { src: '/logo-emesent.png', alt: 'Emesent', scale: 1.5 },
+  { src: '/logo-xgrids.png', alt: 'XGRIDS', scale: 1.5 },
   { src: '/logo-revit.png', alt: 'Revit' },
 ];
 

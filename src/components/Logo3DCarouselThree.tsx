@@ -1,13 +1,11 @@
 'use client';
 
-import { Suspense, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Image } from '@react-three/drei';
-import * as THREE from 'three';
+import { useState } from 'react';
 
 interface Logo {
   src: string;
   alt: string;
+  scale?: number;
 }
 
 interface Logo3DCarouselThreeProps {
@@ -17,61 +15,70 @@ interface Logo3DCarouselThreeProps {
   className?: string;
 }
 
-function LogoRing({ logos, rotationSpeed = 0.2 }: { logos: Logo[]; rotationSpeed: number }) {
-  const groupRef = useRef<THREE.Group>(null);
-  const count = logos.length;
-  const radius = 3.2;
-
-  useFrame((_, delta) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += rotationSpeed * delta;
-    }
-  });
-
-  return (
-    <group ref={groupRef}>
-      {logos.map((logo, i) => {
-        const angle = (i / count) * Math.PI * 2;
-        const x = Math.sin(angle) * radius;
-        const z = Math.cos(angle) * radius;
-        return (
-          <Float key={i} speed={0.5} floatIntensity={0.2}>
-            <group position={[x, 0, z]} rotation={[0, -angle, 0]}>
-              <Image
-                url={logo.src}
-                scale={[1.8, 1.2]}
-                transparent
-                toneMapped={false}
-              />
-            </group>
-          </Float>
-        );
-      })}
-    </group>
-  );
-}
-
 export default function Logo3DCarouselThree({
   logos,
   autoRotate = true,
-  rotationSpeed = 0.2,
+  rotationSpeed = 0.3,
   className = '',
 }: Logo3DCarouselThreeProps) {
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Map rotationSpeed to a sensible marquee duration (lower = slower)
+  const duration = Math.max(12, Math.round(20 / rotationSpeed));
+
+  // Duplicate the full set for seamless infinite scroll
+  // (the scrollLogos keyframe translates -50%, so doubling creates a perfect loop)
+  const track = [...logos, ...logos];
+
   return (
-    <div className={`relative w-full h-[360px] md:h-[480px] lg:h-full lg:min-h-[400px] flex items-center justify-center ${className}`}>
-      <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-[var(--muted)]">Loading...</div>}>
-        <Canvas
-          camera={{ position: [0, 0, 8], fov: 45 }}
-          gl={{ alpha: true, antialias: true }}
-          dpr={[1, 2]}
-        >
-          <color attach="background" args={['transparent']} />
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[5, 5, 5]} intensity={1.2} castShadow />
-          <directionalLight position={[-5, -3, -5]} intensity={0.4} />
-          <LogoRing logos={logos} rotationSpeed={autoRotate ? rotationSpeed : 0} />
-        </Canvas>
-      </Suspense>
+    <div
+      className={`relative w-full h-[200px] md:h-[280px] lg:h-full lg:min-h-[200px] flex items-center justify-center overflow-hidden ${className}`}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Gradient fade — left edge */}
+      <div
+        className="absolute inset-y-0 left-0 w-20 md:w-32 z-10 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to right, var(--surface) 0%, transparent 100%)',
+        }}
+      />
+
+      {/* Gradient fade — right edge */}
+      <div
+        className="absolute inset-y-0 right-0 w-20 md:w-32 z-10 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to left, var(--surface) 0%, transparent 100%)',
+        }}
+      />
+
+      {/* Scrolling track */}
+      <div
+        className="flex items-center"
+        style={{
+          width: 'max-content',
+          animation: `scrollLogos ${duration}s linear infinite`,
+          animationPlayState: isPaused || !autoRotate ? 'paused' : 'running',
+        }}
+      >
+        {track.map((logo, index) => (
+          <div
+            key={index}
+            className="group flex-shrink-0 flex flex-col items-center justify-center mx-8 md:mx-14 lg:mx-16"
+          >
+            <img
+              src={logo.src}
+              alt={logo.alt}
+              className="h-10 md:h-14 lg:h-16 w-auto max-w-[120px] md:max-w-[160px] lg:max-w-[180px] object-contain select-none transition-opacity duration-300 opacity-70 group-hover:opacity-100"
+              style={logo.scale ? { transform: `scale(${logo.scale})` } : undefined}
+              draggable={false}
+            />
+            <span className="mt-2 md:mt-3 font-display text-[10px] md:text-xs tracking-widest text-[var(--muted)] uppercase select-none pointer-events-none">
+              {logo.alt}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
