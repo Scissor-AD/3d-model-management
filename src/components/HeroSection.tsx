@@ -26,15 +26,16 @@ export default function HeroSection() {
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center">
-      {/* Animation Container - starts fullscreen, shrinks when complete */}
+    <div className="relative w-full h-full flex flex-col items-center justify-start md:justify-center">
+      {/* On mobile: tagline and counters first (order-1, order-2), then carousel centered in remaining space (order-3, flex-1). On desktop: carousel first, then tagline, then counters. */}
+      {/* Animation Container - starts fullscreen, shrinks when complete. On mobile when complete, sits in flex-1 area below text and is centered there. */}
       <div 
         ref={containerRef}
         className={`
           relative z-10
           ${!animationComplete 
             ? 'fixed inset-0 z-50' 
-            : 'w-full max-w-lg md:max-w-3xl lg:max-w-5xl'
+            : 'order-3 md:order-1 w-full max-w-lg md:max-w-3xl lg:max-w-5xl flex-1 md:flex-initial min-h-0 flex items-center justify-center'
           }
         `}
         style={{
@@ -67,10 +68,10 @@ export default function HeroSection() {
       {/* Text Content - only visible after animation */}
       {animationComplete && (
         <>
-          {/* Tagline */}
+          {/* Tagline - on mobile order-1 (top), on desktop order-2 */}
           <div 
             className={`
-              relative z-10 mt-4 md:mt-6 text-center
+              relative z-10 order-1 md:order-2 mt-0 md:mt-6 text-center flex-shrink-0
               ${showTagline ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}
             `}
             style={{
@@ -80,9 +81,9 @@ export default function HeroSection() {
             <AnimatedTagline />
           </div>
           
-          {/* Counters Row */}
-          <div className="relative z-10 mt-4 md:mt-6 w-full max-w-3xl">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8">
+          {/* Counters Row - on mobile order-2, on desktop order-3 */}
+          <div className="relative z-10 order-2 md:order-3 mt-4 md:mt-6 w-full max-w-3xl flex-shrink-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8 justify-items-center">
               <div 
                 className={`
                   ${showCounters[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}

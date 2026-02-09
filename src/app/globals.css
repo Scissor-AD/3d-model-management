@@ -220,6 +220,9 @@ input:focus, select:focus, textarea:focus {
   font-size: clamp(1.25rem, 3.5vw, 2.5rem);
   font-weight: 400;
   letter-spacing: 0.04em;
+  word-spacing: 0.08em;
+  line-height: 1.35;
+  text-align: center;
 }
 
 /* Section Headings - matches hero tagline size */

@@ -81,21 +81,46 @@ const workWithUsContent = {
 
 export default function StrategicAlliesPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('about');
-  const [openCaseStudyKey, setOpenCaseStudyKey] = useState<CaseStudySection | null>('problem');
+  const [activeCaseStudySection, setActiveCaseStudySection] = useState<CaseStudySection | null>(null);
+  const [caseStudyExpanded, setCaseStudyExpanded] = useState(false);
   const [contactDrawerOpen, setContactDrawerOpen] = useState(false);
 
   const handleTabClick = (tabKey: TabKey) => {
-    setActiveTab(tabKey);
-    if (tabKey === 'case-study' && openCaseStudyKey === null) {
-      setOpenCaseStudyKey('problem');
-    }
-    if (tabKey !== 'case-study') {
-      setOpenCaseStudyKey(null);
+    if (tabKey === 'case-study') {
+      setCaseStudyExpanded(!caseStudyExpanded);
+      if (!caseStudyExpanded) {
+        setActiveTab('case-study');
+        setActiveCaseStudySection('problem'); // Default to first subsection
+      }
+    } else {
+      setActiveTab(tabKey);
+      setCaseStudyExpanded(false);
+      setActiveCaseStudySection(null);
     }
   };
 
-  const toggleCaseStudyItem = (key: CaseStudySection) => {
-    setOpenCaseStudyKey((prev) => (prev === key ? null : key));
+  const handleCaseStudySectionClick = (section: CaseStudySection) => {
+    setActiveCaseStudySection(section);
+    setActiveTab('case-study');
+  };
+
+  const getCurrentSectionIndex = () => {
+    if (!activeCaseStudySection) return 0;
+    return caseStudySections.findIndex(s => s.key === activeCaseStudySection);
+  };
+
+  const goToPrevSection = () => {
+    const currentIndex = getCurrentSectionIndex();
+    if (currentIndex > 0) {
+      setActiveCaseStudySection(caseStudySections[currentIndex - 1].key);
+    }
+  };
+
+  const goToNextSection = () => {
+    const currentIndex = getCurrentSectionIndex();
+    if (currentIndex < caseStudySections.length - 1) {
+      setActiveCaseStudySection(caseStudySections[currentIndex + 1].key);
+    }
   };
 
   const renderContent = () => {
@@ -168,83 +193,104 @@ export default function StrategicAlliesPage() {
               </ul>
             </div>
 
-            {/* Digital Twin Asset */}
+            {/* Digital Twin Asset - desktop: new visualization, mobile: current asset */}
             <div className="w-full aspect-[4/3] md:aspect-[2/1] overflow-hidden rounded-sm">
-              <img 
-                src="/digital-twin-asset.png" 
-                alt="Digital Twin visualization showing a building with its virtual replica"
-                className="w-full h-full object-cover object-top"
-              />
+              <picture>
+                <source
+                  media="(min-width: 768px)"
+                  srcSet="/strategic-allies-digital-twin-desktop.png?v=2"
+                />
+                <img
+                  src="/digital-twin-asset.png"
+                  alt="Digital Twin visualization showing a building with its virtual replica"
+                  className="w-full h-full object-cover object-top"
+                />
+              </picture>
             </div>
           </div>
         );
 
-      case 'case-study': {
-        const getContent = (key: CaseStudySection) =>
-          key === 'problem'
-            ? caseStudyContent.problem.content
-            : key === 'approach'
-              ? caseStudyContent.approach.content
-              : caseStudyContent.finalSolution.content;
-
+      case 'case-study':
+        const currentContent = activeCaseStudySection === 'problem' 
+          ? caseStudyContent.problem.content 
+          : activeCaseStudySection === 'approach' 
+            ? caseStudyContent.approach.content 
+            : caseStudyContent.finalSolution.content;
+        
+        const currentIndex = getCurrentSectionIndex();
+        const isFirst = currentIndex === 0;
+        const isLast = currentIndex === caseStudySections.length - 1;
+        
         return (
           <div className="space-y-8">
-            {/* Accordion */}
-            <div className="border border-[var(--border)] rounded-sm divide-y divide-[var(--border)] overflow-hidden">
-              {caseStudySections.map((section) => {
-                const isOpen = openCaseStudyKey === section.key;
-                return (
-                  <div key={section.key} className="bg-[var(--surface)]">
-                    <button
-                      type="button"
-                      onClick={() => toggleCaseStudyItem(section.key)}
-                      className="w-full flex items-center justify-between gap-4 py-4 px-4 md:px-5 text-left font-display text-sm font-medium tracking-wide transition-colors hover:bg-[var(--surface-elevated)]"
-                      aria-expanded={isOpen}
-                      aria-controls={`case-study-panel-${section.key}`}
-                      id={`case-study-trigger-${section.key}`}
-                    >
-                      <span className={isOpen ? 'text-[var(--foreground)]' : 'text-[var(--foreground)]'}>
-                        {section.label}
-                      </span>
-                      <span
-                        className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] transition-transform duration-200 ${
-                          isOpen ? 'rotate-180' : ''
-                        }`}
-                        aria-hidden
-                      >
-                        <svg className="w-4 h-4 text-[var(--foreground)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </span>
-                    </button>
-                    <div
-                      id={`case-study-panel-${section.key}`}
-                      role="region"
-                      aria-labelledby={`case-study-trigger-${section.key}`}
-                      className={`grid transition-[grid-template-rows] duration-200 ease-out ${
-                        isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-                      }`}
-                    >
-                      <div className="overflow-hidden">
-                        <div className="py-0 px-4 pb-4 md:px-5 md:pb-5 pt-0">
-                          <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify max-w-3xl">
-                            {getContent(section.key)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Content with navigation */}
+            <div className="flex items-start justify-between gap-6">
+              {/* Text content */}
+              <div className="max-w-3xl">
+                <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+                  {currentContent}
+                </p>
+              </div>
+              
+              {/* Prev/Next Navigation - right aligned */}
+              <div className="flex-shrink-0 flex items-center gap-2">
+                {/* Progress indicator */}
+                <span className="text-xs font-display font-medium text-[var(--muted)] mr-2 hidden sm:inline">
+                  {currentIndex + 1} / {caseStudySections.length}
+                </span>
+                
+                {/* Previous button */}
+                <button
+                  onClick={goToPrevSection}
+                  disabled={isFirst}
+                  className={`group relative w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200 ${
+                    isFirst 
+                      ? 'border-[var(--border)] text-[var(--muted)] cursor-not-allowed opacity-40' 
+                      : 'border-[var(--foreground)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--surface)]'
+                  }`}
+                  aria-label="Previous section"
+                >
+                  <svg 
+                    className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                
+                {/* Next button */}
+                <button
+                  onClick={goToNextSection}
+                  disabled={isLast}
+                  className={`group relative w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200 ${
+                    isLast 
+                      ? 'border-[var(--border)] text-[var(--muted)] cursor-not-allowed opacity-40' 
+                      : 'border-[var(--foreground)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--surface)]'
+                  }`}
+                  aria-label="Next section"
+                >
+                  <svg 
+                    className="w-4 h-4 transition-transform group-hover:translate-x-0.5" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* Asset placeholder for case study */}
-            <div className="w-full aspect-[4/3] md:aspect-[2/1] bg-[#DADADA] flex items-center justify-center rounded-sm">
+            <div className="w-full aspect-[4/3] md:aspect-[2/1] bg-[#DADADA] flex items-center justify-center">
               <span className="font-display font-bold text-[var(--foreground)]">Asset</span>
             </div>
           </div>
         );
-      }
 
       case 'work-with-us':
         return (
@@ -285,25 +331,77 @@ export default function StrategicAlliesPage() {
 
             {/* Tabs */}
             <div className="border-b border-[var(--border)] mb-6">
-              <nav className="flex gap-4 md:gap-8 items-center">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => handleTabClick(tab.key)}
-                    className={`pb-3 font-display text-xs md:text-sm font-medium tracking-wide transition-all whitespace-nowrap ${
-                      activeTab === tab.key
-                        ? 'font-bold border-b-2 border-[var(--foreground)]'
-                        : 'text-[var(--muted)] hover:text-[var(--foreground)]'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
+              {/* Desktop: Main tabs with subsections right-aligned */}
+              <nav 
+                className="flex items-center justify-between"
+              >
+                {/* Main Tabs */}
+                <div className="flex gap-4 md:gap-8 items-center">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => handleTabClick(tab.key)}
+                      className={`pb-3 font-display text-xs md:text-sm font-medium tracking-wide transition-all whitespace-nowrap ${
+                        activeTab === tab.key
+                          ? 'font-bold border-b-2 border-[var(--foreground)]'
+                          : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Case Study Subsections - Desktop: right-aligned */}
+                {caseStudyExpanded && (
+                  <div className="hidden md:flex items-center gap-1">
+                    {caseStudySections.map((section, idx) => (
+                      <button
+                        key={section.key}
+                        onClick={() => handleCaseStudySectionClick(section.key)}
+                        className={`pb-3 px-3 font-display text-sm font-medium tracking-wide transition-all whitespace-nowrap relative ${
+                          activeCaseStudySection === section.key
+                            ? 'text-[var(--foreground)]'
+                            : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                        }`}
+                      >
+                        {section.label}
+                        {activeCaseStudySection === section.key && (
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--foreground)]" />
+                        )}
+                        {idx < caseStudySections.length - 1 && (
+                          <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-3 bg-[var(--border)]" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </nav>
             </div>
 
+            {/* Mobile: Case Study Subsections as segmented control */}
+            {caseStudyExpanded && (
+              <div className="md:hidden mb-6 -mt-3">
+                <div className="flex bg-[var(--surface-elevated)] rounded-full p-1 gap-1">
+                  {caseStudySections.map((section) => (
+                    <button
+                      key={section.key}
+                      onClick={() => handleCaseStudySectionClick(section.key)}
+                      className={`flex-1 py-2 px-3 font-display text-xs font-medium tracking-wide transition-all whitespace-nowrap rounded-full ${
+                        activeCaseStudySection === section.key
+                          ? 'bg-[var(--foreground)] text-[var(--surface)]'
+                          : 'text-[var(--muted)] hover:text-[var(--foreground)]'
+                      }`}
+                    >
+                      {section.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Tab Content */}
-            <div className="animate-fade-in mb-10 lg:mb-0 lg:flex-1 lg:overflow-auto" key={activeTab}>
+            <div className="animate-fade-in mb-10 lg:mb-0 lg:flex-1 lg:overflow-auto scrollbar-hide" key={activeTab}>
               {renderContent()}
             </div>
           </div>

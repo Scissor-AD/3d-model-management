@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
-import Logo3DCarousel from '@/components/Logo3DCarousel';
+import Logo3DCarouselThree from '@/components/Logo3DCarouselThree';
 
 type TabKey = 'reality-capture' | 'digital-production' | 'equipment-software';
 
@@ -24,6 +24,15 @@ const realityCaptureContent = {
     },
   ],
 };
+
+const equipmentLogos = [
+  { src: '/logo-navvis.png', alt: 'NavVis' },
+  { src: '/logo-leica.png', alt: 'Leica' },
+  { src: '/logo-faro.png', alt: 'FARO' },
+  { src: '/logo-emesent.png', alt: 'Emesent' },
+  { src: '/logo-xgrids.png', alt: 'XGRIDS' },
+  { src: '/logo-revit.png', alt: 'Revit' },
+];
 
 const digitalProductionContent = {
   sections: [
@@ -100,26 +109,11 @@ export default function SolutionsPage() {
         );
 
       case 'equipment-software':
-        const logos = [
-          { src: '/logo-navvis.png', alt: 'NavVis' },
-          { src: '/logo-leica.png', alt: 'Leica' },
-          { src: '/logo-faro.png', alt: 'FARO' },
-          { src: '/logo-emesent.png', alt: 'Emesent' },
-          { src: '/logo-xgrids.png', alt: 'XGRIDS' },
-          { src: '/logo-revit.png', alt: 'Revit' },
-        ];
         return (
-          <div className="flex flex-col md:flex-row gap-8 md:gap-12">
-            {/* Text content - left side on desktop */}
-            <div className="md:w-1/2">
-              <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-                Our team employs a flexible, technology-agnostic approach, selecting scanning, registration, and UAV solutions based on project requirements. We work with LiDAR and SLAM systems from Leica, Emesent, FARO, XGRIDS, and NavVis, and register data within Revit, Archicad, and digital twin environments including TwinMaker, Omniverse, and Tandem. Open-format delivery in GLB and glTF, combined with UAV data capture using DJI drone technology, ensures compatibility across design, planning, and asset management workflows.
-              </p>
-            </div>
-            {/* 3D Logos carousel - right side on desktop, below on mobile */}
-            <div className="md:w-1/2">
-              <Logo3DCarousel logos={logos} autoRotate={true} rotationSpeed={0.25} />
-            </div>
+          <div>
+            <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+              Our team employs a flexible, technology-agnostic approach, selecting scanning, registration, and UAV solutions based on project requirements. We work with LiDAR and SLAM systems from Leica, Emesent, FARO, XGRIDS, and NavVis, and register data within Revit, Archicad, and digital twin environments including TwinMaker, Omniverse, and Tandem. Open-format delivery in GLB and glTF, combined with UAV data capture using DJI drone technology, ensures compatibility across design, planning, and asset management workflows.
+            </p>
           </div>
         );
 
@@ -162,25 +156,32 @@ export default function SolutionsPage() {
               {renderContent()}
             </div>
 
-            {/* Asset Image */}
+            {/* Asset Image / Video */}
             <div className="w-full mt-auto lg:flex-1 lg:min-h-0">
-              <img
-                src={
-                  activeTab === 'digital-production' 
-                    ? '/digital-production-hero.png' 
-                    : activeTab === 'equipment-software'
-                    ? '/equipment-hero.png'
-                    : '/solutions-hero.png'
-                }
-                alt={
-                  activeTab === 'digital-production' 
-                    ? '3D BIM model of industrial facility' 
-                    : activeTab === 'equipment-software'
-                    ? 'Laser scanner on tripod in industrial facility'
-                    : '3D model scan of construction site with exposed roof trusses'
-                }
-                className="w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full object-cover aspect-[16/9] sm:aspect-video lg:object-contain"
-              />
+              {activeTab === 'reality-capture' && (
+                <video
+                  src="/solutions-hero.mp4"
+                  poster="/solutions-hero.png"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                  className="w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full object-cover aspect-[16/9] sm:aspect-video lg:object-contain"
+                />
+              )}
+              {activeTab === 'digital-production' && (
+                <img
+                  src="/digital-production-hero.png"
+                  alt="3D BIM model of industrial facility"
+                  className="w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full object-cover aspect-[16/9] sm:aspect-video lg:object-contain"
+                />
+              )}
+              {activeTab === 'equipment-software' && (
+                <div className="w-full h-full lg:min-h-0 flex items-center justify-center">
+                  <Logo3DCarouselThree logos={equipmentLogos} autoRotate={true} rotationSpeed={0.3} className="lg:h-full" />
+                </div>
+              )}
             </div>
           </div>
         </section>

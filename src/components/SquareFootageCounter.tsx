@@ -111,7 +111,7 @@ export default function SquareFootageCounter({
   return (
     <div 
       ref={counterRef}
-      className="flex flex-col items-center gap-2 md:gap-1 py-4 md:py-0"
+      className="flex flex-col items-center md:items-start gap-2 md:gap-1 py-4 md:py-0 w-full md:w-auto"
     >
       <div className={`flex items-baseline ${suffix ? 'gap-2 md:gap-1.5' : ''}`}>
         <span 
@@ -126,7 +126,7 @@ export default function SquareFootageCounter({
           </span>
         )}
       </div>
-      <span className="font-display text-xs md:text-xs tracking-[0.2em] md:tracking-[0.25em] text-[var(--muted)] uppercase">
+      <span className="font-display text-xs md:text-xs tracking-[0.2em] md:tracking-[0.25em] text-[var(--muted)] uppercase text-center md:text-left">
         {label}
       </span>
     </div>
