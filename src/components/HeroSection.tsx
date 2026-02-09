@@ -92,10 +92,11 @@ export default function HeroSection() {
                 }}
               >
                 <SquareFootageCounter 
-                  targetValue={240}
-                  duration={2500}
+                  targetValue={240000000}
+                  duration={1500}
                   label="SQUARE FEET SCANNED"
-                  suffix="+ million sq ft"
+                  suffix="sq ft"
+                  slowIncrementRate={0.15}
                 />
               </div>
               
@@ -125,10 +126,10 @@ export default function HeroSection() {
                 }}
               >
                 <SquareFootageCounter 
-                  targetValue={2400}
+                  targetValue={98}
                   duration={2200}
-                  label="MODELS DELIVERED"
-                  suffix=""
+                  label="ON TIME DELIVERY PERCENTAGE"
+                  suffix="%"
                   slowIncrementRate={0}
                 />
               </div>
