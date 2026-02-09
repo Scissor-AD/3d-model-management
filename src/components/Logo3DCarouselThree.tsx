@@ -39,7 +39,6 @@ function LogoRing({ logos, rotationSpeed = 0.2 }: { logos: Logo[]; rotationSpeed
             <group position={[x, 0, z]} rotation={[0, -angle, 0]}>
               <Image
                 url={logo.src}
-                alt={logo.alt}
                 scale={[1.8, 1.2]}
                 transparent
                 toneMapped={false}
