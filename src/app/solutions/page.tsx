@@ -68,6 +68,9 @@ export default function SolutionsPage() {
   const [contactDrawerOpen, setContactDrawerOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Track HLS instance across renders so controls always work
+  const hlsRef = useRef<Hls | null>(null);
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video || activeTab !== 'reality-capture') return;
@@ -76,18 +79,62 @@ export default function SolutionsPage() {
     // Browsers block autoplay for unmuted videos, so we set it imperatively.
     video.muted = true;
 
+    // --- Seamless loop handling ---
+    // The native `loop` attr is unreliable with HLS streams (can stutter or
+    // fail to restart). Instead we listen for `ended` and manually seek to 0.
+    const handleEnded = () => {
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    };
+    video.addEventListener('ended', handleEnded);
+
+    // Re-trigger play when the user interacts with the controls after pause
+    const handlePlay = () => {
+      // Ensure muted stays in sync so autoplay policy isn't violated
+      if (video.muted) video.muted = true;
+    };
+    video.addEventListener('play', handlePlay);
+
     let hls: Hls | null = null;
 
     if (Hls.isSupported()) {
       // Chrome, Firefox, Edge — use hls.js
-      hls = new Hls();
+      hls = new Hls({
+        enableWorker: true,
+        // Keep enough buffer so seek-to-start on loop is instant
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+      });
+      hlsRef.current = hls;
+
       hls.loadSource(SOLUTIONS_VIDEO_HLS);
       hls.attachMedia(video);
+
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch(() => {});
       });
+
+      // Graceful error recovery keeps playback & controls alive
+      hls.on(Hls.Events.ERROR, (_event, data) => {
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.warn('[HLS] fatal network error – attempting recovery');
+              hls?.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.warn('[HLS] fatal media error – attempting recovery');
+              hls?.recoverMediaError();
+              break;
+            default:
+              console.error('[HLS] fatal error – destroying instance');
+              hls?.destroy();
+              break;
+          }
+        }
+      });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Safari — native HLS support
+      // Safari — native HLS support (loop handled by ended listener above)
       video.src = SOLUTIONS_VIDEO_HLS;
       video.addEventListener('loadedmetadata', () => {
         video.play().catch(() => {});
@@ -95,8 +142,11 @@ export default function SolutionsPage() {
     }
 
     return () => {
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('play', handlePlay);
       if (hls) {
         hls.destroy();
+        hlsRef.current = null;
       }
     };
   }, [activeTab]);
@@ -202,7 +252,6 @@ export default function SolutionsPage() {
                   poster="/solutions-hero.png"
                   autoPlay
                   muted
-                  loop
                   playsInline
                   controls
                   className="w-full h-full object-cover"
