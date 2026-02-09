@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import Hls from 'hls.js';
 import Navigation from '@/components/Navigation';
 import Logo3DCarouselThree from '@/components/Logo3DCarouselThree';
+
+const SOLUTIONS_VIDEO_HLS =
+  'https://customer-ry80t0pvpkom5b16.cloudflarestream.com/bf6f338f01c5d8a025bb35a46122146c/manifest/video.m3u8';
 
 type TabKey = 'reality-capture' | 'digital-production' | 'equipment-software';
 
@@ -62,6 +66,40 @@ const digitalProductionContent = {
 export default function SolutionsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('reality-capture');
   const [contactDrawerOpen, setContactDrawerOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || activeTab !== 'reality-capture') return;
+
+    // React has a known bug where the `muted` attribute is not applied to the DOM.
+    // Browsers block autoplay for unmuted videos, so we set it imperatively.
+    video.muted = true;
+
+    let hls: Hls | null = null;
+
+    if (Hls.isSupported()) {
+      // Chrome, Firefox, Edge — use hls.js
+      hls = new Hls();
+      hls.loadSource(SOLUTIONS_VIDEO_HLS);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Safari — native HLS support
+      video.src = SOLUTIONS_VIDEO_HLS;
+      video.addEventListener('loadedmetadata', () => {
+        video.play().catch(() => {});
+      });
+    }
+
+    return () => {
+      if (hls) {
+        hls.destroy();
+      }
+    };
+  }, [activeTab]);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -160,14 +198,14 @@ export default function SolutionsPage() {
             <div className="w-full mt-auto lg:flex-1 lg:min-h-0">
               {activeTab === 'reality-capture' && (
                 <video
-                  src="/solutions-hero.mp4"
+                  ref={videoRef}
                   poster="/solutions-hero.png"
                   autoPlay
                   muted
                   loop
                   playsInline
                   controls
-                  className="w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full object-cover aspect-[16/9] sm:aspect-video lg:object-contain"
+                  className="w-full h-full object-cover"
                 />
               )}
               {activeTab === 'digital-production' && (

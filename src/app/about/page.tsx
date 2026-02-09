@@ -74,13 +74,7 @@ export default function AboutPage() {
               <h2 className="font-display text-sm font-bold tracking-wide mb-4 lg:mb-3">CONTACT</h2>
               
               <p className="text-sm text-[var(--foreground)] mb-4 lg:mb-3 leading-relaxed">
-                Complete the form below for a complimentary consultation or email us directly at{' '}
-                <a 
-                  href="mailto:info@3dmodelmanagement.co" 
-                  className="underline hover:text-[var(--muted)] transition-colors"
-                >
-                  info@3dmodelmanagement.co
-                </a>
+                Complete the form below for a complimentary consultation.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-4">
