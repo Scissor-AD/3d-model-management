@@ -82,8 +82,8 @@ export default function HeroSection() {
           </div>
           
           {/* Counters Row - on mobile order-2, on desktop order-3 */}
-          <div className="relative z-10 order-2 md:order-3 mt-4 md:mt-6 w-full max-w-3xl flex-shrink-0">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-8 justify-items-center">
+          <div className="relative z-10 order-2 md:order-3 mt-4 md:mt-6 w-full max-w-4xl flex-shrink-0">
+            <div className="grid grid-cols-1 md:flex md:justify-evenly gap-2 md:gap-0 justify-items-center">
               <div 
                 className={`
                   ${showCounters[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}
