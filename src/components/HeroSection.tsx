@@ -92,9 +92,10 @@ export default function HeroSection() {
                 }}
               >
                 <SquareFootageCounter 
-                  targetValue={12500000}
+                  targetValue={240}
                   duration={2500}
-                  label="SQUARE FEET CAPTURED"
+                  label="SQUARE FEET SCANNED"
+                  suffix="+ million sq ft"
                 />
               </div>
               
