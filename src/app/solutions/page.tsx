@@ -314,7 +314,7 @@ export default function SolutionsPage() {
                   <img
                     src="/digital-production-hero.png"
                     alt="3D BIM model of industrial facility"
-                    className="w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full object-cover aspect-[16/9] sm:aspect-video lg:object-right lg:object-contain"
+                    className="w-full max-h-[280px] lg:max-h-[320px] object-contain"
                   />
                 )}
               </div>
