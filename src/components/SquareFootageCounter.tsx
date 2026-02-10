@@ -59,10 +59,10 @@ export default function SquareFootageCounter({
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // Easing function for smooth deceleration
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      // easeOutQuint — graceful, smooth deceleration
+      const easeOutQuint = 1 - Math.pow(1 - progress, 5);
       
-      const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
+      const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuint);
       setCount(currentValue);
 
       if (progress < 1) {
@@ -115,7 +115,7 @@ export default function SquareFootageCounter({
     >
       <div className={`flex items-baseline ${suffix ? 'gap-2 md:gap-1.5' : ''}`}>
         <span 
-          className="font-display text-3xl md:text-3xl lg:text-4xl font-bold md:font-semibold tracking-tight tabular-nums transition-all duration-100"
+          className="font-display text-3xl md:text-3xl lg:text-4xl font-bold md:font-semibold tracking-tight tabular-nums"
           style={{ fontVariantNumeric: 'tabular-nums' }}
         >
           {formatNumber(count)}

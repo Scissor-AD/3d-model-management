@@ -40,7 +40,7 @@ export default function AnimatedTagline() {
       setTimeout(() => {
         setDisplayIndex((prev) => (prev + 1) % taglines.length);
         setIsAnimating(false);
-      }, 400);
+      }, 550);
       
       setCurrentIndex((prev) => (prev + 1) % taglines.length);
     }, 4000); // Change every 4 seconds

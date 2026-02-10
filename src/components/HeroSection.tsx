@@ -14,9 +14,9 @@ const SHOWCASE_STATS = [
 ];
 
 // Timing constants (ms)
-const FINAL_IMAGE_HOLD = 800;
-const STAT_DURATION = 1200;  // longer hold for each stat — more luxurious pacing
-const REVEAL_HOLD = 300;
+const FINAL_IMAGE_HOLD = 1200;
+const STAT_DURATION = 2400;  // luxurious pacing — each stat breathes
+const REVEAL_HOLD = 600;
 
 interface HeroSectionProps {
   onComplete?: () => void;
@@ -25,7 +25,7 @@ interface HeroSectionProps {
 
 /**
  * Large centered stat display with premium count-up animation.
- * Uses easeOutExpo for dramatic deceleration — numbers rush in
+ * Uses easeOutQuint for graceful deceleration — numbers glide in
  * then elegantly settle. The suffix fades alongside the number
  * while the label reveals with its own CSS-driven stagger.
  */
@@ -33,12 +33,12 @@ function ShowcaseStat({ value, suffix, label }: { value: number; suffix: string;
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    const duration = 750;
+    const duration = 1600;
     let frame: number;
     let startTime: number;
 
-    // easeOutExpo — dramatic initial rush, elegant deceleration
-    const ease = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -12 * t));
+    // easeOutQuint — graceful deceleration, less aggressive than expo
+    const ease = (t: number) => 1 - Math.pow(1 - t, 5);
 
     const animate = (now: number) => {
       if (!startTime) startTime = now;
@@ -58,7 +58,7 @@ function ShowcaseStat({ value, suffix, label }: { value: number; suffix: string;
     // Delay start so the CSS blur-to-sharp entrance is visible first
     const timeout = setTimeout(() => {
       frame = requestAnimationFrame(animate);
-    }, 220);
+    }, 350);
 
     return () => {
       clearTimeout(timeout);
@@ -155,15 +155,15 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
       addTimeout(() => {
         setAnimationComplete(true);
 
-        addTimeout(() => setShowTagline(true), 1000);
-        addTimeout(() => setShowCounters([true, false, false]), 1300);
-        addTimeout(() => setShowCounters([true, true, false]), 1600);
-        addTimeout(() => setShowCounters([true, true, true]), 1900);
+        addTimeout(() => setShowTagline(true), 800);
+        addTimeout(() => setShowCounters([true, false, false]), 1400);
+        addTimeout(() => setShowCounters([true, true, false]), 2000);
+        addTimeout(() => setShowCounters([true, true, true]), 2600);
 
         addTimeout(() => {
           setPhase('complete');
           onCompleteRef.current?.();
-        }, 2400);
+        }, 3200);
       }, REVEAL_HOLD);
     }, FINAL_IMAGE_HOLD + STAT_DURATION * 3);
   }, [skipAnimation, addTimeout]);
@@ -172,7 +172,7 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
     phase === 'stat0' ? 0 : phase === 'stat1' ? 1 : phase === 'stat2' ? 2 : -1;
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-start md:justify-center">
+    <div className="relative w-full h-full flex flex-col items-center justify-start md:justify-center pb-16 md:pb-0">
       {/* Animation Container — starts fullscreen, shrinks when complete */}
       <div
         ref={containerRef}
@@ -187,7 +187,7 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
           ...(!animationComplete
             ? { top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh' }
             : {}),
-          transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 1.8s cubic-bezier(0.25, 0.1, 0.25, 1)',
         }}
       >
         <div
@@ -229,11 +229,11 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
           <div
             className={`
               relative z-10 order-2 mt-4 md:mt-6 text-center flex-shrink-0
-              ${showTagline ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}
+              ${showTagline ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}
             `}
             style={{
               transition:
-                'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                'opacity 1.2s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
             }}
           >
             <AnimatedTagline />
@@ -243,15 +243,15 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
           <div className="relative z-10 order-3 mt-4 md:mt-6 w-full max-w-4xl flex-shrink-0">
             <div className="grid grid-cols-1 md:flex md:justify-evenly gap-2 md:gap-0 justify-items-center">
               <div
-                className={`${showCounters[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+                className={`${showCounters[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
                 style={{
                   transition:
-                    'opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
+                    'opacity 1s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)',
                 }}
               >
                 <SquareFootageCounter
                   targetValue={240000000}
-                  duration={1500}
+                  duration={2200}
                   label="SQUARE FEET SCANNED"
                   suffix="sq ft"
                   slowIncrementRate={0.15}
@@ -259,15 +259,15 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
               </div>
 
               <div
-                className={`${showCounters[1] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+                className={`${showCounters[1] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
                 style={{
                   transition:
-                    'opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
+                    'opacity 1s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)',
                 }}
               >
                 <SquareFootageCounter
                   targetValue={850}
-                  duration={2000}
+                  duration={2600}
                   label="PROJECTS DELIVERED"
                   suffix=""
                   slowIncrementRate={0}
@@ -275,15 +275,15 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
               </div>
 
               <div
-                className={`${showCounters[2] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+                className={`${showCounters[2] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
                 style={{
                   transition:
-                    'opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
+                    'opacity 1s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)',
                 }}
               >
                 <SquareFootageCounter
                   targetValue={98}
-                  duration={2200}
+                  duration={2800}
                   label="ON TIME DELIVERY PERCENTAGE"
                   suffix="%"
                   slowIncrementRate={0}
