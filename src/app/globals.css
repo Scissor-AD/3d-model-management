@@ -17,7 +17,13 @@
   
   --control-bar-height: 60px;
   --control-bar-expanded-height: 400px;
-  --nav-height: 80px;
+  --nav-height: 64px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --nav-height: 56px;
+  }
 }
 
 @theme inline {
@@ -412,4 +418,70 @@ input:focus, select:focus, textarea:focus {
 
 .animate-slide-in-right {
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Metallic Shine Animation for Logo */
+@keyframes metallicShine {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-15deg);
+  }
+}
+
+.logo-shine {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.logo-shine::after {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 40%;
+  height: 120%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 10%,
+    rgba(255, 255, 255, 0.08) 30%,
+    rgba(255, 255, 255, 0.35) 48%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.35) 52%,
+    rgba(255, 255, 255, 0.08) 70%,
+    rgba(255, 255, 255, 0) 90%,
+    transparent 100%
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  animation: metallicShine 3.5s cubic-bezier(0.4, 0, 0.2, 1) 2s infinite;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+}
+
+/* On dark backgrounds, use a lighter blend */
+.logo-shine--light::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 10%,
+    rgba(255, 255, 255, 0.12) 30%,
+    rgba(255, 255, 255, 0.5) 48%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0.5) 52%,
+    rgba(255, 255, 255, 0.12) 70%,
+    rgba(255, 255, 255, 0) 90%,
+    transparent 100%
+  );
+  mix-blend-mode: soft-light;
+}
+
+/* Pause animation on reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .logo-shine::after {
+    animation: none;
+  }
 }

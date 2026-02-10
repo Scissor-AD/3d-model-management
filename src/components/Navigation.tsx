@@ -84,14 +84,18 @@ export default function Navigation() {
       <nav className="flex items-center justify-between px-6 md:px-12 h-[var(--nav-height)] border-b-2 border-[var(--border-dark)]">
         {/* Logo */}
         <Link href="/" className="flex items-center group">
-          <Image
-            src="/3dmm-logo.svg"
-            alt="3DMM Logo"
-            width={160}
-            height={40}
-            priority
-            className="h-8 md:h-10 w-auto"
-          />
+          <span className="logo-shine">
+            <Image
+              src="/3dmm-logo.svg"
+              alt="3DMM Logo"
+              width={268}
+              height={110}
+              priority
+              unoptimized
+              className="h-8 md:h-10 w-auto"
+              style={{ imageRendering: 'auto' }}
+            />
+          </span>
         </Link>
 
         {/* Desktop Navigation - Right justified */}
@@ -100,7 +104,7 @@ export default function Navigation() {
             <Link
               key={item.label}
               href={item.href}
-              className="font-body text-sm font-medium tracking-wide link-hover"
+              className="font-body text-xs font-medium tracking-wide link-hover"
             >
               {item.label}
             </Link>
@@ -108,7 +112,7 @@ export default function Navigation() {
           {!hideConnectButton && (
             <button
               onClick={openContactDrawer}
-              className="bg-white text-[var(--foreground)] border-2 border-[var(--border-dark)] px-6 py-2 text-sm font-medium hover:bg-[var(--foreground)] hover:text-white transition-all"
+              className="bg-white text-[var(--foreground)] border-2 border-[var(--border-dark)] px-5 py-1.5 text-xs font-medium hover:bg-[var(--foreground)] hover:text-white transition-all"
             >
               LET&apos;S CONNECT
             </button>
