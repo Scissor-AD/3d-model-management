@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -71,6 +71,13 @@ export default function Navigation() {
     setIsMobileMenuOpen(false);
     setIsContactDrawerOpen(true);
   };
+
+  // Allow any page to open the contact drawer via a custom event
+  useEffect(() => {
+    const handler = () => setIsContactDrawerOpen(true);
+    window.addEventListener('open-contact-drawer', handler);
+    return () => window.removeEventListener('open-contact-drawer', handler);
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[var(--background)]">

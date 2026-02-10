@@ -65,7 +65,6 @@ const digitalProductionContent = {
 
 export default function SolutionsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('reality-capture');
-  const [contactDrawerOpen, setContactDrawerOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Track HLS instance across renders so controls always work
@@ -188,7 +187,7 @@ export default function SolutionsPage() {
               Have a project in mind that's not listed here? Contact us with a description of your goals, and we'll assess how we can support your vision.
             </p>
             <button
-              onClick={() => setContactDrawerOpen(true)}
+              onClick={() => window.dispatchEvent(new Event('open-contact-drawer'))}
               className="mt-4 lg:mt-3 px-6 py-3 lg:py-2 bg-white border border-[var(--foreground)] text-[var(--foreground)] font-display text-sm font-medium tracking-wide hover:bg-[var(--foreground)] hover:text-white transition-colors"
             >
               CONTACT US
@@ -274,106 +273,6 @@ export default function SolutionsPage() {
         </section>
       </main>
 
-      {/* Contact Drawer */}
-      {contactDrawerOpen && (
-        <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-            onClick={() => setContactDrawerOpen(false)}
-          />
-          
-          {/* Drawer */}
-          <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
-            {/* Drag indicator */}
-            <div className="flex justify-center py-3">
-              <div className="w-12 h-1 bg-white/30 rounded-full" />
-            </div>
-            
-            <div className="bg-[var(--foreground)] text-[var(--surface)] rounded-t-3xl overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center justify-between px-6 md:px-10 pt-6 pb-4">
-                <div>
-                  <h2 className="font-display text-xl md:text-2xl font-bold tracking-wide">LET&apos;S CONNECT</h2>
-                  <p className="text-sm text-[var(--surface)]/60 mt-1">Tell us about your project</p>
-                </div>
-                <button
-                  onClick={() => setContactDrawerOpen(false)}
-                  className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-white/10 rounded-full transition-colors"
-                >
-                  ×
-                </button>
-              </div>
-              
-              {/* Content */}
-              <div className="px-6 md:px-10 pb-8 md:pb-10 max-h-[70vh] overflow-y-auto">
-                <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); setContactDrawerOpen(false); }}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">NAME</label>
-                      <input 
-                        type="text" 
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors"
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">COMPANY</label>
-                      <input 
-                        type="text" 
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors"
-                        placeholder="Your company"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">EMAIL</label>
-                      <input 
-                        type="email" 
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">PHONE</label>
-                      <input 
-                        type="tel" 
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors"
-                        placeholder="(555) 000-0000"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-display font-medium tracking-wider mb-2 text-[var(--surface)]/60">MESSAGE</label>
-                    <textarea 
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 text-[var(--surface)] text-sm placeholder:text-white/40 focus:border-white/40 focus:bg-white/15 transition-colors min-h-[100px] resize-none"
-                      placeholder="Tell us about your project..."
-                    />
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                    <button
-                      type="submit"
-                      className="flex-1 bg-[var(--surface)] text-[var(--foreground)] font-display text-sm font-semibold tracking-wide py-4 px-6 hover:bg-[var(--surface)]/90 transition-colors"
-                    >
-                      SEND MESSAGE
-                    </button>
-                    <a
-                      href="mailto:contact@3dmodelmanagement.com"
-                      className="flex-1 border border-white/30 text-[var(--surface)] font-display text-sm font-medium tracking-wide py-4 px-6 text-center hover:bg-white/10 transition-colors"
-                    >
-                      EMAIL DIRECTLY
-                    </a>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }
