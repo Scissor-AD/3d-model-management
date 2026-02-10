@@ -171,13 +171,13 @@ export default function SolutionsPage() {
       case 'digital-production':
         return (
           <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 md:gap-x-12 gap-y-8 md:gap-y-10">
               {digitalProductionContent.sections.map((section) => (
                 <div key={section.title}>
-                  <h3 className="font-display text-sm font-semibold tracking-wide mb-2 lg:mb-1">
+                  <h3 className="font-display text-sm font-semibold tracking-wide mb-3">
                     {section.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify lg:text-xs lg:leading-relaxed">
+                  <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
                     {section.description}
                   </p>
                 </div>
@@ -210,14 +210,22 @@ export default function SolutionsPage() {
   };
 
   return (
-    <div className="min-h-screen lg:h-screen lg:max-h-screen flex flex-col lg:overflow-hidden">
+    <div className="min-h-screen flex flex-col">
       <Navigation />
 
-      <main className="flex-1 pt-[var(--nav-height)] lg:h-[calc(100vh-var(--nav-height))] lg:overflow-hidden">
-        <section className="mx-4 md:mx-8 my-6 md:my-10 lg:my-6 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)] lg:h-[calc(100vh-var(--nav-height)-3rem)] lg:overflow-hidden lg:flex lg:flex-col">
-          <div className="p-6 md:p-10 lg:p-6 lg:flex-1 lg:flex lg:flex-col lg:overflow-hidden">
-            {/* Page Title */}
-            <h1 className="section-heading mb-6 lg:mb-4 lg:text-xl">SOLUTIONS</h1>
+      <main className="flex-1 pt-[var(--nav-height)]">
+        <section className="mx-4 md:mx-8 my-6 md:my-10 lg:my-6 bg-[var(--surface)]">
+          <div className="p-6 md:p-10 lg:p-6">
+            {/* Page Title + Connect Button */}
+            <div className="flex items-center justify-between mb-6 lg:mb-4">
+              <h1 className="section-heading lg:text-xl">SOLUTIONS</h1>
+              <button
+                onClick={() => window.dispatchEvent(new Event('open-contact-drawer'))}
+                className="bg-white text-[var(--foreground)] border-2 border-[var(--border-dark)] px-6 py-2 text-sm font-medium hover:bg-[var(--foreground)] hover:text-white transition-all"
+              >
+                LET&apos;S CONNECT
+              </button>
+            </div>
 
             {/* Tabs */}
             <div className="border-b border-[var(--border)] mb-6 lg:mb-4 overflow-x-auto">

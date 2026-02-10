@@ -24,7 +24,7 @@ export default function Navigation() {
   const [isContactDrawerOpen, setIsContactDrawerOpen] = useState(false);
   
   // Hide "Let's Connect" button on About and Strategic Allies pages
-  const hideConnectButton = pathname === '/about' || pathname === '/strategic-allies';
+  const hideConnectButton = pathname === '/about' || pathname === '/strategic-allies' || pathname === '/solutions';
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',

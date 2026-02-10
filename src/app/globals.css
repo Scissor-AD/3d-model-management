@@ -49,12 +49,10 @@ body {
   overflow-x: hidden;
 }
 
-/* Desktop: No scroll - all content fits in viewport */
+/* Desktop: prevent horizontal scroll only */
 @media (min-width: 1024px) {
   html, body {
-    overflow: hidden;
-    height: 100vh;
-    height: 100dvh;
+    overflow-x: hidden;
   }
 }
 
