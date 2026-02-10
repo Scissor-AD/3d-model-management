@@ -12,9 +12,10 @@ const LAYER_IMAGES = [
 
 interface HeroPipesAnimationProps {
   onComplete?: () => void;
+  skipAnimation?: boolean;
 }
 
-export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationProps) {
+export default function HeroPipesAnimation({ onComplete, skipAnimation = false }: HeroPipesAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
@@ -27,6 +28,8 @@ export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationPro
   const scanLineRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>(0);
   const startTimeRef = useRef<number>(0);
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
   const totalLayers = LAYER_IMAGES.length;
 
@@ -58,6 +61,21 @@ export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationPro
   // Main animation loop
   useEffect(() => {
     if (isLoading || isComplete) return;
+
+    // Skip animation if requested
+    if (skipAnimation) {
+      setIsComplete(true);
+      layerElementsRef.current.forEach((el, idx) => {
+        if (el) {
+          el.style.opacity = idx === totalLayers - 1 ? '1' : '0';
+          el.style.transform = 'translateY(0) translateZ(0) rotateX(0) scale(1)';
+        }
+      });
+      if (heroImageRef.current) heroImageRef.current.style.opacity = '0';
+      if (scanLineRef.current) scanLineRef.current.style.opacity = '0';
+      if (onCompleteRef.current) onCompleteRef.current();
+      return;
+    }
 
     // Easing functions
     const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -119,7 +137,7 @@ export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationPro
         if (heroImageRef.current) heroImageRef.current.style.opacity = '0';
         if (scanLineRef.current) scanLineRef.current.style.opacity = '0';
         
-        if (onComplete) onComplete();
+        if (onCompleteRef.current) onCompleteRef.current();
         return;
       }
 
@@ -317,7 +335,7 @@ export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationPro
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isLoading, isComplete, totalLayers, onComplete]);
+  }, [isLoading, isComplete, totalLayers, skipAnimation]);
 
   return (
     <div 
@@ -351,14 +369,14 @@ export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationPro
         </div>
       )}
 
-      {/* Hero image - visible during scan phase (smaller) */}
+      {/* Hero image - visible during scan phase */}
       {!isLoading && (
         <div 
           ref={heroImageRef}
           className="absolute inset-0 flex items-center justify-center"
           style={{ opacity: 0, zIndex: 15 }}
         >
-          <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-4">
+          <div className="w-[85%] max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/hero-image.png"
@@ -370,7 +388,7 @@ export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationPro
         </div>
       )}
 
-      {/* Layer stack (larger final size) */}
+      {/* Layer stack — fills viewport on desktop */}
       {!isLoading && (
         <div 
           className="absolute inset-0 flex items-center justify-center"
@@ -380,7 +398,7 @@ export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationPro
             <div
               key={layer.src}
               ref={(el) => { layerElementsRef.current[index] = el; }}
-              className="absolute w-full max-w-3xl md:max-w-4xl lg:max-w-5xl px-4"
+              className="absolute w-[85%] max-w-3xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90rem]"
               style={{
                 transformStyle: 'preserve-3d',
                 zIndex: totalLayers - index,
@@ -404,7 +422,7 @@ export default function HeroPipesAnimation({ onComplete }: HeroPipesAnimationPro
       {!isLoading && !isComplete && (
         <div
           ref={scanLineRef}
-          className="absolute left-[12%] w-[76%] h-[3px] z-40 pointer-events-none"
+          className="absolute left-[8%] w-[84%] h-[3px] z-40 pointer-events-none"
           style={{ top: '20%', opacity: 0 }}
         >
           <div 

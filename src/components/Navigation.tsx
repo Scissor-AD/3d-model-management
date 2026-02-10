@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const navItems = [
-  { label: 'HOME', href: '/' },
+  { label: 'HOME', href: '/#home' },
   { label: 'SOLUTIONS', href: '/solutions' },
   { label: 'STRATEGIC ALLIES', href: '/strategic-allies' },
   { label: 'ABOUT US', href: '/about' },
@@ -25,6 +25,21 @@ export default function Navigation() {
   
   // Hide "Let's Connect" button on About and Strategic Allies pages
   const hideConnectButton = pathname === '/about' || pathname === '/strategic-allies' || pathname === '/solutions';
+
+  /** Custom handling for HOME link — ensures #home hash is preserved */
+  const handleNavClick = (e: React.MouseEvent, item: { href: string }) => {
+    if (item.href === '/#home') {
+      e.preventDefault();
+      setIsMobileMenuOpen(false);
+      if (pathname === '/') {
+        // Already on home page — smooth scroll to hub section
+        document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // From another page — full navigation to preserve hash
+        window.location.href = '/#home';
+      }
+    }
+  };
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -104,6 +119,7 @@ export default function Navigation() {
             <Link
               key={item.label}
               href={item.href}
+              onClick={(e) => handleNavClick(e, item)}
               className="font-body text-xs font-medium tracking-wide link-hover"
             >
               {item.label}
@@ -147,7 +163,10 @@ export default function Navigation() {
               <Link
                 key={item.label}
                 href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  handleNavClick(e, item);
+                  setIsMobileMenuOpen(false);
+                }}
                 className="font-display text-3xl font-bold py-4 border-b border-[var(--border)] text-[var(--foreground)]"
                 style={{ animationDelay: `${(index + 1) * 0.05}s` }}
               >

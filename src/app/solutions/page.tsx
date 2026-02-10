@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Hls from 'hls.js';
 import Navigation from '@/components/Navigation';
-import Logo3DCarouselThree from '@/components/Logo3DCarouselThree';
+import LogoRibbonSphere, { companyBlurbs } from '@/components/LogoRibbonSphere';
 
 const SOLUTIONS_VIDEO_HLS =
   'https://customer-ry80t0pvpkom5b16.cloudflarestream.com/bf6f338f01c5d8a025bb35a46122146c/manifest/video.m3u8';
@@ -66,30 +66,22 @@ const digitalProductionContent = {
 export default function SolutionsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('reality-capture');
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Track HLS instance across renders so controls always work
   const hlsRef = useRef<Hls | null>(null);
+  const [hoveredCompany, setHoveredCompany] = useState<string | null>(null);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || activeTab !== 'reality-capture') return;
 
-    // React has a known bug where the `muted` attribute is not applied to the DOM.
-    // Browsers block autoplay for unmuted videos, so we set it imperatively.
     video.muted = true;
 
-    // --- Seamless loop handling ---
-    // The native `loop` attr is unreliable with HLS streams (can stutter or
-    // fail to restart). Instead we listen for `ended` and manually seek to 0.
     const handleEnded = () => {
       video.currentTime = 0;
       video.play().catch(() => {});
     };
     video.addEventListener('ended', handleEnded);
 
-    // Re-trigger play when the user interacts with the controls after pause
     const handlePlay = () => {
-      // Ensure muted stays in sync so autoplay policy isn't violated
       if (video.muted) video.muted = true;
     };
     video.addEventListener('play', handlePlay);
@@ -97,10 +89,8 @@ export default function SolutionsPage() {
     let hls: Hls | null = null;
 
     if (Hls.isSupported()) {
-      // Chrome, Firefox, Edge — use hls.js
       hls = new Hls({
         enableWorker: true,
-        // Keep enough buffer so seek-to-start on loop is instant
         maxBufferLength: 30,
         maxMaxBufferLength: 60,
       });
@@ -113,7 +103,6 @@ export default function SolutionsPage() {
         video.play().catch(() => {});
       });
 
-      // Graceful error recovery keeps playback & controls alive
       hls.on(Hls.Events.ERROR, (_event, data) => {
         if (data.fatal) {
           switch (data.type) {
@@ -133,7 +122,6 @@ export default function SolutionsPage() {
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Safari — native HLS support (loop handled by ended listener above)
       video.src = SOLUTIONS_VIDEO_HLS;
       video.addEventListener('loadedmetadata', () => {
         video.play().catch(() => {});
@@ -195,14 +183,81 @@ export default function SolutionsPage() {
           </div>
         );
 
-      case 'equipment-software':
+      case 'equipment-software': {
+        const logos = [
+          { src: '/logo-navvis.png', alt: 'NavVis' },
+          { src: '/logo-leica.png', alt: 'Leica' },
+          { src: '/logo-faro.png', alt: 'FARO' },
+          { src: '/logo-emesent.png', alt: 'Emesent' },
+          { src: '/logo-xgrids.png', alt: 'XGRIDS' },
+          { src: '/logo-revit.png', alt: 'Revit' },
+        ];
+        const hoveredInfo = hoveredCompany ? companyBlurbs[hoveredCompany] : null;
+        
         return (
-          <div>
-            <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-              Our team employs a flexible, technology-agnostic approach, selecting scanning, registration, and UAV solutions based on project requirements. We work with LiDAR and SLAM systems from Leica, Emesent, FARO, XGRIDS, and NavVis, and register data within Revit, Archicad, and digital twin environments including TwinMaker, Omniverse, and Tandem. Open-format delivery in GLB and glTF, combined with UAV data capture using DJI drone technology, ensures compatibility across design, planning, and asset management workflows.
-            </p>
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 lg:flex-1 lg:min-h-0">
+            {/* Left side - Text + Image (50%) */}
+            <div className="lg:w-1/2 flex flex-col">
+              <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify mb-6">
+                Our team employs a flexible, technology-agnostic approach, selecting scanning, registration, and UAV solutions based on project requirements. We work with LiDAR and SLAM systems from Leica, Emesent, FARO, XGRIDS, and NavVis, and register data within Revit, Archicad, and digital twin environments including TwinMaker, Omniverse, and Tandem. Open-format delivery in GLB and glTF, combined with UAV data capture using DJI drone technology, ensures compatibility across design, planning, and asset management workflows.
+              </p>
+              {/* Hero Image - centered under text on desktop */}
+              <div className="flex-1 flex items-center justify-center">
+                <img
+                  src="/equipment-hero.png"
+                  alt="Laser scanner on tripod in industrial facility"
+                  className="w-full h-auto max-h-[400px] object-contain"
+                />
+              </div>
+            </div>
+            
+            {/* Right side - Animation + Info Card (50%) */}
+            <div className="lg:w-1/2 flex flex-col">
+              {/* Logo Animation */}
+              <div className="flex-shrink-0">
+                <LogoRibbonSphere 
+                  logos={logos} 
+                  autoRotate={true} 
+                  rotationSpeed={0.15}
+                  onHoverChange={setHoveredCompany}
+                />
+              </div>
+              
+              {/* Company Info Card - Nutrition Label Style */}
+              <div className="mt-4 lg:mt-2">
+                <div 
+                  className="border-2 border-[var(--foreground)] bg-white p-4 transition-all duration-300"
+                  style={{ minHeight: '140px' }}
+                >
+                  {hoveredInfo ? (
+                    <>
+                      <div className="border-b-4 border-[var(--foreground)] pb-2 mb-3">
+                        <h4 className="font-display text-lg font-bold tracking-wide">
+                          {hoveredInfo.name}
+                        </h4>
+                      </div>
+                      <div className="border-b border-[var(--foreground)]/20 pb-2 mb-2">
+                        <p className="text-xs text-[var(--muted)] uppercase tracking-wider font-medium">
+                          Partnership
+                        </p>
+                      </div>
+                      <p className="text-sm leading-relaxed text-[var(--foreground)]">
+                        {hoveredInfo.blurb}
+                      </p>
+                    </>
+                  ) : (
+                    <div className="h-full flex flex-col justify-center items-center text-center">
+                      <p className="text-sm text-[var(--muted)]">
+                        Hover over a partner logo to learn more
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         );
+      }
 
       default:
         return null;
@@ -251,32 +306,29 @@ export default function SolutionsPage() {
               {renderContent()}
             </div>
 
-            {/* Asset Image / Video */}
-            <div className="w-full mt-auto lg:flex-1 lg:min-h-0">
-              {activeTab === 'reality-capture' && (
-                <video
-                  ref={videoRef}
-                  poster="/solutions-hero.png"
-                  autoPlay
-                  muted
-                  playsInline
-                  controls
-                  className="w-full h-full object-cover"
-                />
-              )}
-              {activeTab === 'digital-production' && (
-                <img
-                  src="/digital-production-hero.png"
-                  alt="3D BIM model of industrial facility"
-                  className="w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full object-cover aspect-[16/9] sm:aspect-video lg:object-right lg:object-contain"
-                />
-              )}
-              {activeTab === 'equipment-software' && (
-                <div className="w-full h-full lg:min-h-0 flex items-center justify-center">
-                  <Logo3DCarouselThree logos={equipmentLogos} autoRotate={true} rotationSpeed={0.3} className="lg:h-full" />
-                </div>
-              )}
-            </div>
+            {/* Asset Image / Video - only show for non equipment-software tabs */}
+            {activeTab !== 'equipment-software' && (
+              <div className="w-full mt-auto lg:flex-1 lg:min-h-0">
+                {activeTab === 'reality-capture' && (
+                  <video
+                    ref={videoRef}
+                    poster="/solutions-hero.png"
+                    autoPlay
+                    muted
+                    playsInline
+                    loop
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                {activeTab === 'digital-production' && (
+                  <img
+                    src="/digital-production-hero.png"
+                    alt="3D BIM model of industrial facility"
+                    className="w-full h-auto md:aspect-[21/9] lg:h-full lg:max-h-full object-cover aspect-[16/9] sm:aspect-video lg:object-right lg:object-contain"
+                  />
+                )}
+              </div>
+            )}
           </div>
         </section>
       </main>
