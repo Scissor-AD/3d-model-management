@@ -195,26 +195,16 @@ export default function SolutionsPage() {
         const hoveredInfo = hoveredCompany ? companyBlurbs[hoveredCompany] : null;
         
         return (
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 lg:flex-1 lg:min-h-0">
-            {/* Left side - Text + Image (50%) */}
-            <div className="lg:w-1/2 flex flex-col">
-              <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify mb-6">
-                Our team employs a flexible, technology-agnostic approach, selecting scanning, registration, and UAV solutions based on project requirements. We work with LiDAR and SLAM systems from Leica, Emesent, FARO, XGRIDS, and NavVis, and register data within Revit, Archicad, and digital twin environments including TwinMaker, Omniverse, and Tandem. Open-format delivery in GLB and glTF, combined with UAV data capture using DJI drone technology, ensures compatibility across design, planning, and asset management workflows.
-              </p>
-              {/* Hero Image - centered under text on desktop */}
-              <div className="flex-1 flex items-center justify-center">
-                <img
-                  src="/equipment-hero.png"
-                  alt="Laser scanner on tripod in industrial facility"
-                  className="w-full h-auto max-h-[400px] object-contain"
-                />
-              </div>
-            </div>
+          <div className="flex flex-col gap-6 lg:gap-4">
+            {/* Text description */}
+            <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+              Our team employs a flexible, technology-agnostic approach, selecting scanning, registration, and UAV solutions based on project requirements. We work with LiDAR and SLAM systems from Leica, Emesent, FARO, XGRIDS, and NavVis, and register data within Revit, Archicad, and digital twin environments including TwinMaker, Omniverse, and Tandem. Open-format delivery in GLB and glTF, combined with UAV data capture using DJI drone technology, ensures compatibility across design, planning, and asset management workflows.
+            </p>
             
-            {/* Right side - Animation + Info Card (50%) */}
-            <div className="lg:w-1/2 flex flex-col">
+            {/* Animation + Info Card */}
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 lg:min-h-0">
               {/* Logo Animation */}
-              <div className="flex-shrink-0">
+              <div className="lg:w-1/2 flex-shrink-0">
                 <LogoRibbonSphere 
                   logos={logos} 
                   autoRotate={true} 
@@ -224,9 +214,9 @@ export default function SolutionsPage() {
               </div>
               
               {/* Company Info Card - Nutrition Label Style */}
-              <div className="mt-4 lg:mt-2">
+              <div className="lg:w-1/2 flex items-center">
                 <div 
-                  className="border-2 border-[var(--foreground)] bg-white p-4 transition-all duration-300"
+                  className="w-full border-2 border-[var(--foreground)] bg-white p-4 transition-all duration-300"
                   style={{ minHeight: '140px' }}
                 >
                   {hoveredInfo ? (
