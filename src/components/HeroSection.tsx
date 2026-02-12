@@ -8,8 +8,8 @@ import SquareFootageCounter from '@/components/SquareFootageCounter';
 type Phase = 'animating' | 'finalImage' | 'revealing' | 'complete';
 
 // Timing constants (ms)
-const FINAL_IMAGE_HOLD = 400;
-const REVEAL_HOLD = 200;
+const FINAL_IMAGE_HOLD = 500;
+const REVEAL_HOLD = 300;
 
 interface HeroSectionProps {
   onComplete?: () => void;
@@ -77,13 +77,13 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
       addTimeout(() => {
         setAnimationComplete(true);
 
-        addTimeout(() => setShowTagline(true), 300);
-        addTimeout(() => setShowCounters([true, true, true]), 500);
+        addTimeout(() => setShowTagline(true), 500);
+        addTimeout(() => setShowCounters([true, true, true]), 800);
 
         addTimeout(() => {
           setPhase('complete');
           onCompleteRef.current?.();
-        }, 1200);
+        }, 1800);
       }, REVEAL_HOLD);
     }, FINAL_IMAGE_HOLD);
   }, [skipAnimation, addTimeout]);
