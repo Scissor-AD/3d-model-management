@@ -86,18 +86,18 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     // ============================================
     // STORYBOARD - Tight, clean sequence
     // ============================================
-    // Phase 1: SCAN (0-2000ms) - Hero image with scan line
-    // Phase 2: REVEAL (2000-3200ms) - Hero fades, layers appear spread
-    // Phase 3: HOLD SPREAD (3200-4500ms) - Layers visible, spread apart
-    // Phase 4: ASSEMBLE (4500-7500ms) - Layers smoothly stack together
-    // Phase 5: FINALIZE (7500-8500ms) - Merge into final image
+    // Phase 1: SCAN (0-1400ms) - Hero image with scan line
+    // Phase 2: REVEAL (1400-2200ms) - Hero fades, layers appear spread
+    // Phase 3: HOLD SPREAD (2200-2900ms) - Layers visible, spread apart
+    // Phase 4: ASSEMBLE (2900-4700ms) - Layers smoothly stack together
+    // Phase 5: FINALIZE (4700-5400ms) - Merge into final image
     // ============================================
     
-    const SCAN_END = 2000;
-    const REVEAL_END = 3200;
-    const HOLD_END = 4500;
-    const ASSEMBLE_END = 7500;
-    const FINAL_END = 8500;
+    const SCAN_END = 1400;
+    const REVEAL_END = 2200;
+    const HOLD_END = 2900;
+    const ASSEMBLE_END = 4700;
+    const FINAL_END = 5400;
 
     const startAnimation = () => {
       startTimeRef.current = Date.now();

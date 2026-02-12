@@ -79,7 +79,7 @@ export default function Home() {
 
     const timer = setTimeout(() => {
       document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
-    }, 4500);
+    }, 2000);
 
     // Cancel auto-scroll if user initiates scroll / swipe
     const cancel = () => clearTimeout(timer);

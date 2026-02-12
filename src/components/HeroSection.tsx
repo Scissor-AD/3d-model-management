@@ -5,88 +5,15 @@ import HeroPipesAnimation from '@/components/HeroPipesAnimation';
 import AnimatedTagline from '@/components/AnimatedTagline';
 import SquareFootageCounter from '@/components/SquareFootageCounter';
 
-type Phase = 'animating' | 'finalImage' | 'stat0' | 'stat1' | 'stat2' | 'revealing' | 'complete';
-
-const SHOWCASE_STATS = [
-  { value: 240000000, suffix: 'sq ft', label: 'SQUARE FEET SCANNED' },
-  { value: 850, suffix: '', label: 'PROJECTS DELIVERED' },
-  { value: 98, suffix: '%', label: 'ON TIME DELIVERY PERCENTAGE' },
-];
+type Phase = 'animating' | 'finalImage' | 'revealing' | 'complete';
 
 // Timing constants (ms)
-const FINAL_IMAGE_HOLD = 1200;
-const STAT_DURATION = 2400;  // luxurious pacing — each stat breathes
-const REVEAL_HOLD = 600;
+const FINAL_IMAGE_HOLD = 400;
+const REVEAL_HOLD = 200;
 
 interface HeroSectionProps {
   onComplete?: () => void;
   skipAnimation?: boolean;
-}
-
-/**
- * Large centered stat display with premium count-up animation.
- * Uses easeOutQuint for graceful deceleration — numbers glide in
- * then elegantly settle. The suffix fades alongside the number
- * while the label reveals with its own CSS-driven stagger.
- */
-function ShowcaseStat({ value, suffix, label }: { value: number; suffix: string; label: string }) {
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    const duration = 1600;
-    let frame: number;
-    let startTime: number;
-
-    // easeOutQuint — graceful deceleration, less aggressive than expo
-    const ease = (t: number) => 1 - Math.pow(1 - t, 5);
-
-    const animate = (now: number) => {
-      if (!startTime) startTime = now;
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = ease(progress);
-
-      setDisplayValue(Math.round(value * eased));
-
-      if (progress < 1) {
-        frame = requestAnimationFrame(animate);
-      } else {
-        setDisplayValue(value);
-      }
-    };
-
-    // Delay start so the CSS blur-to-sharp entrance is visible first
-    const timeout = setTimeout(() => {
-      frame = requestAnimationFrame(animate);
-    }, 350);
-
-    return () => {
-      clearTimeout(timeout);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [value]);
-
-  return (
-    <div className="text-center px-4">
-      <div className="flex items-baseline justify-center gap-2 md:gap-3">
-        <span
-          className="font-display text-5xl sm:text-6xl md:text-8xl lg:text-[9rem] font-bold tracking-tight leading-none"
-          style={{ fontVariantNumeric: 'tabular-nums' }}
-        >
-          {displayValue.toLocaleString()}
-        </span>
-        {suffix && (
-          <span className="font-display text-xl sm:text-2xl md:text-4xl lg:text-5xl text-[var(--muted)] font-medium leading-none">
-            {suffix}
-          </span>
-        )}
-      </div>
-      {/* .stat-label class triggers a staggered CSS reveal */}
-      <div className="stat-label mt-4 md:mt-6 font-display text-[11px] sm:text-xs md:text-sm tracking-[0.3em] text-[var(--muted)] uppercase">
-        {label}
-      </div>
-    </div>
-  );
 }
 
 export default function HeroSection({ onComplete, skipAnimation = false }: HeroSectionProps) {
@@ -143,33 +70,23 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
     // Phase 1: Hold the final assembled image big (fullscreen)
     setPhase('finalImage');
 
-    // Phase 2–4: Each stat shown big and centered
-    addTimeout(() => setPhase('stat0'), FINAL_IMAGE_HOLD);
-    addTimeout(() => setPhase('stat1'), FINAL_IMAGE_HOLD + STAT_DURATION);
-    addTimeout(() => setPhase('stat2'), FINAL_IMAGE_HOLD + STAT_DURATION * 2);
-
-    // Phase 5: Reveal — container shrinks, text elements fade in
+    // Phase 2: Reveal — container shrinks, text elements fade in
     addTimeout(() => {
       setPhase('revealing');
 
       addTimeout(() => {
         setAnimationComplete(true);
 
-        addTimeout(() => setShowTagline(true), 800);
-        addTimeout(() => setShowCounters([true, false, false]), 1400);
-        addTimeout(() => setShowCounters([true, true, false]), 2000);
-        addTimeout(() => setShowCounters([true, true, true]), 2600);
+        addTimeout(() => setShowTagline(true), 300);
+        addTimeout(() => setShowCounters([true, true, true]), 500);
 
         addTimeout(() => {
           setPhase('complete');
           onCompleteRef.current?.();
-        }, 3200);
+        }, 1200);
       }, REVEAL_HOLD);
-    }, FINAL_IMAGE_HOLD + STAT_DURATION * 3);
+    }, FINAL_IMAGE_HOLD);
   }, [skipAnimation, addTimeout]);
-
-  const statPhaseIndex =
-    phase === 'stat0' ? 0 : phase === 'stat1' ? 1 : phase === 'stat2' ? 2 : -1;
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-start md:justify-center pb-16 md:pb-0">
@@ -199,28 +116,6 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
           <HeroPipesAnimation onComplete={handlePipesComplete} skipAnimation={skipAnimation} />
         </div>
       </div>
-
-      {/* ── Stat Showcase Overlay ────────────────────────── */}
-      {/* Persistent white backdrop while any stat is showing */}
-      {statPhaseIndex >= 0 && (
-        <div className="fixed inset-0 z-[55] bg-white" />
-      )}
-
-      {/* Stat content — key forces remount per phase so animation replays */}
-      {statPhaseIndex >= 0 && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center"
-          key={phase}
-        >
-          <div className="stat-showcase-enter">
-            <ShowcaseStat
-              value={SHOWCASE_STATS[statPhaseIndex].value}
-              suffix={SHOWCASE_STATS[statPhaseIndex].suffix}
-              label={SHOWCASE_STATS[statPhaseIndex].label}
-            />
-          </div>
-        </div>
-      )}
 
       {/* ── Text Content (visible after animation) ────── */}
       {animationComplete && (
