@@ -5,11 +5,7 @@ import HeroPipesAnimation from '@/components/HeroPipesAnimation';
 import AnimatedTagline from '@/components/AnimatedTagline';
 import SquareFootageCounter from '@/components/SquareFootageCounter';
 
-type Phase = 'animating' | 'finalImage' | 'revealing' | 'complete';
-
-// Timing constants (ms)
-const FINAL_IMAGE_HOLD = 500;
-const REVEAL_HOLD = 300;
+type Phase = 'loading' | 'revealing' | 'complete';
 
 interface HeroSectionProps {
   onComplete?: () => void;
@@ -17,7 +13,7 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onComplete, skipAnimation = false }: HeroSectionProps) {
-  const [phase, setPhase] = useState<Phase>(skipAnimation ? 'complete' : 'animating');
+  const [phase, setPhase] = useState<Phase>(skipAnimation ? 'complete' : 'loading');
   const [animationComplete, setAnimationComplete] = useState(skipAnimation);
   const [showTagline, setShowTagline] = useState(skipAnimation);
   const [showCounters, setShowCounters] = useState(
@@ -31,7 +27,6 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
-  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach(clearTimeout);
@@ -44,7 +39,6 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
     return id;
   }, []);
 
-  // Handle mid-animation skip (e.g. user clicks HOME while animation is playing)
   useEffect(() => {
     if (skipAnimation && phase !== 'complete') {
       timeoutsRef.current.forEach(clearTimeout);
@@ -56,8 +50,7 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
     }
   }, [skipAnimation, phase]);
 
-  /** Called when the pipes animation finishes — starts the showcase sequence */
-  const handlePipesComplete = useCallback(() => {
+  const handleViewerReady = useCallback(() => {
     if (skipAnimation) {
       setPhase('complete');
       setAnimationComplete(true);
@@ -67,30 +60,21 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
       return;
     }
 
-    // Phase 1: Hold the final assembled image big (fullscreen)
-    setPhase('finalImage');
+    setPhase('revealing');
+    setAnimationComplete(true);
 
-    // Phase 2: Reveal — container shrinks, text elements fade in
+    addTimeout(() => setShowTagline(true), 400);
+    addTimeout(() => setShowCounters([true, true, true]), 700);
+
     addTimeout(() => {
-      setPhase('revealing');
-
-      addTimeout(() => {
-        setAnimationComplete(true);
-
-        addTimeout(() => setShowTagline(true), 500);
-        addTimeout(() => setShowCounters([true, true, true]), 800);
-
-        addTimeout(() => {
-          setPhase('complete');
-          onCompleteRef.current?.();
-        }, 1800);
-      }, REVEAL_HOLD);
-    }, FINAL_IMAGE_HOLD);
+      setPhase('complete');
+      onCompleteRef.current?.();
+    }, 1600);
   }, [skipAnimation, addTimeout]);
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-start md:justify-center pb-16 md:pb-0">
-      {/* Animation Container — starts fullscreen, shrinks when complete */}
+      {/* Viewer container -- starts fullscreen during load, settles into layout */}
       <div
         ref={containerRef}
         className={`
@@ -109,18 +93,22 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
       >
         <div
           className={`
-            w-full relative bg-white
+            w-full relative bg-white overflow-hidden
             ${!animationComplete ? 'h-full' : 'aspect-[4/3] md:aspect-[16/9] lg:aspect-[2.5/1]'}
           `}
+          style={{
+            boxShadow: animationComplete ? '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.03)' : 'none',
+            border: animationComplete ? '1px solid rgba(0,0,0,0.06)' : 'none',
+            transition: 'box-shadow 1.5s ease, border 1.5s ease',
+          }}
         >
-          <HeroPipesAnimation onComplete={handlePipesComplete} skipAnimation={skipAnimation} />
+          <HeroPipesAnimation onComplete={handleViewerReady} skipAnimation={skipAnimation} />
         </div>
       </div>
 
-      {/* ── Text Content (visible after animation) ────── */}
+      {/* Text content (visible after viewer loads) */}
       {animationComplete && (
         <>
-          {/* Tagline */}
           <div
             className={`
               relative z-10 order-2 mt-4 md:mt-6 text-center flex-shrink-0
@@ -134,7 +122,6 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
             <AnimatedTagline />
           </div>
 
-          {/* Counters Row */}
           <div className="relative z-10 order-3 mt-4 md:mt-6 w-full max-w-4xl flex-shrink-0">
             <div className="grid grid-cols-1 md:flex md:justify-evenly gap-2 md:gap-0 justify-items-center">
               <div
