@@ -62,6 +62,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
   const flyToPresetRef = useRef<(name: string) => void>(() => {});
   const toggleAutoOrbitRef = useRef<() => void>(() => {});
   const adjustBudgetRef = useRef<(delta: number) => void>(() => {});
+  const toggleFsRef = useRef<() => void>(() => {});
 
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
@@ -151,16 +152,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
         keys.delete('r');
       }
       if (k === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        const container = containerRef.current;
-        if (container) {
-          const doc = document as any;
-          const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement;
-          if (fsEl) {
-            (doc.exitFullscreen || doc.webkitExitFullscreen)?.call(doc);
-          } else {
-            (container.requestFullscreen || (container as any).webkitRequestFullscreen)?.call(container);
-          }
-        }
+        toggleFsRef.current?.();
       }
       if (k === ' ') {
         e.preventDefault();
@@ -472,8 +464,12 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement;
     if (fsEl) {
       (doc.exitFullscreen || doc.webkitExitFullscreen)?.call(doc);
+    } else if (el.requestFullscreen) {
+      el.requestFullscreen();
+    } else if ((el as any).webkitRequestFullscreen) {
+      (el as any).webkitRequestFullscreen();
     } else {
-      (el.requestFullscreen || (el as any).webkitRequestFullscreen)?.call(el);
+      setIsFullscreen(prev => !prev);
     }
   }, []);
 
@@ -487,11 +483,13 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('click', onClick); };
   }, [showKbPanel]);
 
+  toggleFsRef.current = toggleFullscreen;
+
   const presetNames = ['front', 'above', 'side', 'interior'] as const;
   const presetLabels: Record<string, string> = { front: 'Front', above: 'Above', side: 'Side', interior: 'Interior' };
 
   return (
-    <div ref={containerRef} className="relative w-full h-full bg-white overflow-hidden">
+    <div ref={containerRef} className={`relative bg-white overflow-hidden ${isFullscreen ? 'fixed inset-0 z-[9999] w-screen h-screen' : 'w-full h-full'}`}>
       {/* Loading */}
       <div
         className="absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-700 bg-white"
