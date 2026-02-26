@@ -104,7 +104,7 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
             className={`relative z-10 order-3 mt-3 md:mt-6 w-full max-w-4xl flex-shrink-0 px-4 md:px-0 ${showCounters[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
             style={{ transition: 'opacity 1s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
           >
-            <div className="md:hidden rounded-xl border border-[var(--border)] bg-white/80 backdrop-blur-sm px-4 py-4">
+            <div className="md:hidden rounded-lg border border-[var(--border)] bg-white/80 backdrop-blur-sm px-2 py-2">
               <div className="grid grid-cols-3 divide-x divide-[var(--border)]">
                 <SquareFootageCounter targetValue={240000000} duration={2200} label="SQ FT SCANNED" suffix="sq ft" slowIncrementRate={0.15} />
                 <SquareFootageCounter targetValue={850} duration={2600} label="PROJECTS" suffix="" slowIncrementRate={0} />
