@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     const db = await getDb();
 
-    await db.collection('contacts').insertOne({
+    await db.collection('my-collection').insertOne({
       firstName,
       lastName,
       email,
@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (signUpForNews) {
-      await db.collection('newsletter').updateOne(
-        { email },
+      await db.collection('my-collection').updateOne(
+        { email, type: 'newsletter' },
         {
-          $set: { email, firstName, lastName, updatedAt: new Date() },
+          $set: { email, firstName, lastName, type: 'newsletter', updatedAt: new Date() },
           $setOnInsert: { subscribedAt: new Date() },
         },
         { upsert: true }

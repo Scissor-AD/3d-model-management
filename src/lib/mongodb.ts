@@ -29,7 +29,7 @@ function getClientPromise(): Promise<MongoClient> {
 
 export default getClientPromise;
 
-export async function getDb(dbName = '3dmm'): Promise<Db> {
+export async function getDb(dbName = 'test'): Promise<Db> {
   const client = await getClientPromise();
   return client.db(dbName);
 }
