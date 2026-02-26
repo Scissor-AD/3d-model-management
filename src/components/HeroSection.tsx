@@ -77,31 +77,9 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
       {/* Viewer container -- starts fullscreen during load, settles into layout */}
       <div
         ref={containerRef}
-        className={`
-          relative z-10
-          ${!animationComplete
-            ? 'fixed inset-0 z-50'
-            : 'order-1 w-full max-w-lg md:max-w-3xl lg:max-w-5xl xl:max-w-6xl flex-1 md:flex-initial min-h-0 flex items-center justify-center'
-          }
-        `}
-        style={{
-          ...(!animationComplete
-            ? { top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh' }
-            : {}),
-          transition: 'all 1.8s cubic-bezier(0.25, 0.1, 0.25, 1)',
-        }}
+        className="relative z-10 order-1 w-full flex-1 md:flex-initial min-h-0 flex items-center justify-center"
       >
-        <div
-          className={`
-            w-full relative bg-white overflow-hidden
-            ${!animationComplete ? 'h-full' : 'aspect-[4/3] md:aspect-[16/9] lg:aspect-[2.5/1]'}
-          `}
-          style={{
-            boxShadow: animationComplete ? '0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.03)' : 'none',
-            border: animationComplete ? '1px solid rgba(0,0,0,0.06)' : 'none',
-            transition: 'box-shadow 1.5s ease, border 1.5s ease',
-          }}
-        >
+        <div className="w-full relative bg-white overflow-hidden aspect-[4/3] md:aspect-[16/9] lg:aspect-[2.5/1]">
           <HeroPipesAnimation onComplete={handleViewerReady} skipAnimation={skipAnimation} />
         </div>
       </div>
