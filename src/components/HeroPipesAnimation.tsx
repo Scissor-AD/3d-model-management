@@ -77,7 +77,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     const isTouch = 'ontouchstart' in window || window.matchMedia('(pointer: coarse)').matches;
     if (isTouch) {
       const blockWheel = (e: WheelEvent) => {
-        if (!document.fullscreenElement) e.stopPropagation();
+        if (!(document.fullscreenElement || (document as any).webkitFullscreenElement)) e.stopPropagation();
       };
       el.addEventListener('wheel', blockWheel, { capture: true, passive: false });
       return () => el.removeEventListener('wheel', blockWheel, { capture: true } as EventListenerOptions);
@@ -153,7 +153,13 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
       if (k === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey) {
         const container = containerRef.current;
         if (container) {
-          document.fullscreenElement ? document.exitFullscreen() : container.requestFullscreen();
+          const doc = document as any;
+          const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement;
+          if (fsEl) {
+            (doc.exitFullscreen || doc.webkitExitFullscreen)?.call(doc);
+          } else {
+            (container.requestFullscreen || (container as any).webkitRequestFullscreen)?.call(container);
+          }
         }
       }
       if (k === ' ') {
@@ -447,14 +453,28 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
 
   // Fullscreen tracking
   useEffect(() => {
-    const fn = () => setIsFullscreen(!!document.fullscreenElement);
+    const fn = () => {
+      const doc = document as any;
+      setIsFullscreen(!!(doc.fullscreenElement || doc.webkitFullscreenElement));
+    };
     document.addEventListener('fullscreenchange', fn);
-    return () => document.removeEventListener('fullscreenchange', fn);
+    document.addEventListener('webkitfullscreenchange', fn);
+    return () => {
+      document.removeEventListener('fullscreenchange', fn);
+      document.removeEventListener('webkitfullscreenchange', fn);
+    };
   }, []);
 
   const toggleFullscreen = useCallback(() => {
-    if (!containerRef.current) return;
-    document.fullscreenElement ? document.exitFullscreen() : containerRef.current.requestFullscreen();
+    const el = containerRef.current;
+    if (!el) return;
+    const doc = document as any;
+    const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement;
+    if (fsEl) {
+      (doc.exitFullscreen || doc.webkitExitFullscreen)?.call(doc);
+    } else {
+      (el.requestFullscreen || (el as any).webkitRequestFullscreen)?.call(el);
+    }
   }, []);
 
   // Close keyboard panel on Escape or outside click
