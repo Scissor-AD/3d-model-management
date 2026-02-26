@@ -63,23 +63,34 @@ export default function Navigation() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    setIsSubmitting(false);
-    setSubmitStatus('success');
-    
-    setTimeout(() => {
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        signUpForNews: false,
-        subject: '',
-        message: '',
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
-      setSubmitStatus('idle');
-      setIsContactDrawerOpen(false);
-    }, 2000);
+
+      if (!res.ok) throw new Error('Submission failed');
+
+      setSubmitStatus('success');
+      setTimeout(() => {
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          signUpForNews: false,
+          subject: '',
+          message: '',
+        });
+        setSubmitStatus('idle');
+        setIsContactDrawerOpen(false);
+      }, 2000);
+    } catch {
+      setSubmitStatus('error');
+      setTimeout(() => setSubmitStatus('idle'), 3000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const openContactDrawer = () => {

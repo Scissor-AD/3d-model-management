@@ -530,10 +530,10 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
         }}
       />
 
-      {/* Fullscreen button */}
+      {/* Fullscreen button (desktop only) */}
       <button
         onClick={toggleFullscreen}
-        className="absolute top-3 md:top-4 right-3 md:right-4 z-50 p-1.5 md:p-2 rounded-lg bg-black/5 hover:bg-black/10 backdrop-blur-sm transition-all duration-300 group"
+        className="hidden md:block absolute top-3 md:top-4 right-3 md:right-4 z-50 p-1.5 md:p-2 rounded-lg bg-black/5 hover:bg-black/10 backdrop-blur-sm transition-all duration-300 group"
         style={{ opacity: showViewer ? 0.7 : 0, pointerEvents: showViewer ? 'auto' : 'none', transition: 'opacity 0.8s ease, background-color 0.3s ease' }}
         title={isFullscreen ? 'Exit fullscreen (F)' : 'Fullscreen (F)'}
         aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
@@ -549,10 +549,10 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
         )}
       </button>
 
-      {/* Auto-orbit toggle */}
+      {/* Auto-orbit toggle (desktop only) */}
       <button
         onClick={() => toggleAutoOrbitRef.current()}
-        className="absolute top-3 md:top-4 right-12 md:right-14 z-50 p-1.5 md:p-2 rounded-lg bg-black/5 hover:bg-black/10 backdrop-blur-sm transition-all duration-300 group"
+        className="hidden md:block absolute top-3 md:top-4 right-12 md:right-14 z-50 p-1.5 md:p-2 rounded-lg bg-black/5 hover:bg-black/10 backdrop-blur-sm transition-all duration-300 group"
         style={{ opacity: showViewer ? 0.7 : 0, pointerEvents: showViewer ? 'auto' : 'none', transition: 'opacity 0.8s ease' }}
         title={autoOrbitActive ? 'Pause auto-rotate (Space)' : 'Resume auto-rotate (Space)'}
         aria-label={autoOrbitActive ? 'Pause auto-rotate' : 'Resume auto-rotate'}
