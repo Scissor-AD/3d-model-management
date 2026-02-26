@@ -6,11 +6,33 @@ import { OrbitControls } from 'three-stdlib';
 
 const POINT_CLOUD_URL = 'cloud.js';
 const POINT_CLOUD_BASE = 'https://3dmodelmanagement.github.io/nypl/pointclouds/nypl_main_hall/';
-const POINT_BUDGET = 1_000_000;
+const INITIAL_POINT_BUDGET = 1_000_000;
+const AUTO_ORBIT_SPEED = 0.12;
+const AUTO_ORBIT_IDLE_MS = 5000;
+const FLY_DURATION = 1.2;
+
+function easeInOutCubic(t: number) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
 
 interface HeroPipesAnimationProps {
   onComplete?: () => void;
   skipAnimation?: boolean;
+}
+
+interface FlyAnim {
+  fromPos: THREE.Vector3;
+  fromTarget: THREE.Vector3;
+  toPos: THREE.Vector3;
+  toTarget: THREE.Vector3;
+  progress: number;
+  duration: number;
+}
+
+interface Preset {
+  label: string;
+  pos: THREE.Vector3;
+  target: THREE.Vector3;
 }
 
 function useIsTouchDevice() {
@@ -24,16 +46,22 @@ function useIsTouchDevice() {
 export default function HeroPipesAnimation({ onComplete, skipAnimation = false }: HeroPipesAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
-  const controlsObjRef = useRef<OrbitControls | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [showViewer, setShowViewer] = useState(false);
   const [showHud, setShowHud] = useState(false);
   const [hudDismissed, setHudDismissed] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showKbPanel, setShowKbPanel] = useState(false);
+  const [activePreset, setActivePreset] = useState<string | null>('front');
+  const [autoOrbitActive, setAutoOrbitActive] = useState(false);
   const onCompleteRef = useRef(onComplete);
   const hasCompletedRef = useRef(false);
   const isTouch = useIsTouchDevice();
   const initedRef = useRef(false);
+
+  const flyToPresetRef = useRef<(name: string) => void>(() => {});
+  const toggleAutoOrbitRef = useRef<() => void>(() => {});
+  const adjustBudgetRef = useRef<(delta: number) => void>(() => {});
 
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
@@ -43,8 +71,6 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     onCompleteRef.current?.();
   }, []);
 
-  // Block scroll-wheel zoom when not fullscreen (so page scrolling works),
-  // but allow touch pinch-zoom always.
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
@@ -56,7 +82,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
   }, []);
 
   // -----------------------------------------------------------------------
-  // Three.js + potree-core — matched to original Potree viewer
+  // Three.js scene
   // -----------------------------------------------------------------------
   useEffect(() => {
     const el = canvasRef.current;
@@ -72,6 +98,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     const w = el.clientWidth || 1;
     const h = el.clientHeight || 1;
     const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 50000);
+    camera.up.set(0, 0, 1);
 
     const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -92,19 +119,135 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     controls.maxDistance = 10000;
     controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
     controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
-    controlsObjRef.current = controls;
+
+    // ---- State for auto-orbit, fly-to, presets ----
+    let lastInteraction = 0;
+    let autoOrbit = false;
+    let flyAnim: FlyAnim | null = null;
+    let presets: Record<string, Preset> = {};
+    let pointBudget = INITIAL_POINT_BUDGET;
+
+    const markInteraction = () => { lastInteraction = performance.now(); };
+    const interactionEvents = ['pointerdown', 'pointerup', 'pointermove', 'touchstart', 'touchmove'];
+    interactionEvents.forEach(evt => el.addEventListener(evt, markInteraction, { passive: true }));
 
     const keys = new Set<string>();
-    let initialCam: { pos: THREE.Vector3; target: THREE.Vector3 } | null = null;
 
     const onKeyDown = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
+      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
       keys.add(k);
+      markInteraction();
+
       if (['w','a','s','d','q','e','arrowup','arrowdown','arrowleft','arrowright'].includes(k)) e.preventDefault();
+
+      if (k === 'r' && presets['front']) {
+        flyToPreset('front');
+        keys.delete('r');
+      }
+      if (k === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const container = containerRef.current;
+        if (container) {
+          document.fullscreenElement ? document.exitFullscreen() : container.requestFullscreen();
+        }
+      }
+      if (k === ' ') {
+        e.preventDefault();
+        autoOrbit = !autoOrbit;
+        setAutoOrbitActive(autoOrbit);
+      }
+      if (k === 'h') setShowHud(prev => !prev);
+      if ((k === '=' || k === '+') && potreeInstance) {
+        pointBudget = Math.min(pointBudget + 500_000, 10_000_000);
+        potreeInstance.pointBudget = pointBudget;
+      }
+      if ((k === '-' || k === '_') && potreeInstance) {
+        pointBudget = Math.max(pointBudget - 500_000, 500_000);
+        potreeInstance.pointBudget = pointBudget;
+      }
+      if (k >= '1' && k <= '4') {
+        const names = ['front', 'above', 'side', 'interior'];
+        const name = names[parseInt(k) - 1];
+        if (presets[name]) flyToPreset(name);
+      }
     };
     const onKeyUp = (e: KeyboardEvent) => keys.delete(e.key.toLowerCase());
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
+
+    function flyToPreset(name: string) {
+      const p = presets[name];
+      if (!p) return;
+      flyAnim = {
+        fromPos: camera.position.clone(),
+        fromTarget: controls.target.clone(),
+        toPos: p.pos.clone(),
+        toTarget: p.target.clone(),
+        progress: 0,
+        duration: FLY_DURATION,
+      };
+      setActivePreset(name);
+      markInteraction();
+    }
+
+    function flyToPoint(point: THREE.Vector3) {
+      const dir = camera.position.clone().sub(controls.target).normalize();
+      const dist = camera.position.distanceTo(controls.target) * 0.3;
+      flyAnim = {
+        fromPos: camera.position.clone(),
+        fromTarget: controls.target.clone(),
+        toPos: point.clone().add(dir.multiplyScalar(dist)),
+        toTarget: point.clone(),
+        progress: 0,
+        duration: FLY_DURATION,
+      };
+      setActivePreset(null);
+      markInteraction();
+    }
+
+    flyToPresetRef.current = flyToPreset;
+    toggleAutoOrbitRef.current = () => {
+      autoOrbit = !autoOrbit;
+      setAutoOrbitActive(autoOrbit);
+    };
+    adjustBudgetRef.current = (delta: number) => {
+      if (!potreeInstance) return;
+      pointBudget = Math.max(500_000, Math.min(10_000_000, pointBudget + delta));
+      potreeInstance.pointBudget = pointBudget;
+    };
+
+    // Double-click fly-to
+    let lastClickTime = 0;
+    let lastClickPos = { x: 0, y: 0 };
+    const onPointerDown = (e: PointerEvent) => {
+      const now = performance.now();
+      const dx = e.clientX - lastClickPos.x;
+      const dy = e.clientY - lastClickPos.y;
+      const isDouble = (now - lastClickTime < 350) && Math.abs(dx) < 10 && Math.abs(dy) < 10;
+      lastClickTime = now;
+      lastClickPos = { x: e.clientX, y: e.clientY };
+
+      if (isDouble && pointClouds.length > 0) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        const mouse = new THREE.Vector2(
+          ((e.clientX - rect.left) / rect.width) * 2 - 1,
+          -((e.clientY - rect.top) / rect.height) * 2 + 1
+        );
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+
+        try {
+          const PotreeModule = (window as any).__potreeModule;
+          if (PotreeModule?.Potree?.pick) {
+            const hit = PotreeModule.Potree.pick(pointClouds, renderer, camera, raycaster.ray);
+            if (hit?.position) flyToPoint(hit.position);
+          }
+        } catch { /* ignore pick failures */ }
+      }
+    };
+    renderer.domElement.addEventListener('pointerdown', onPointerDown);
 
     const onResize = () => {
       const rw = el.clientWidth;
@@ -122,11 +265,13 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     let pointClouds: any[] = [];
 
     (async () => {
-      const { Potree, PointColorType, PointSizeType, PointShape, PotreeRenderer } = await import('potree-core');
+      const potreeModule = await import('potree-core');
       if (disposed) return;
+      const { Potree, PointColorType, PointSizeType, PointShape, PotreeRenderer } = potreeModule;
+      (window as any).__potreeModule = potreeModule;
 
       const potree = new Potree();
-      potree.pointBudget = POINT_BUDGET;
+      potree.pointBudget = pointBudget;
       potreeInstance = potree;
 
       potreeRenderer = new PotreeRenderer({
@@ -160,16 +305,24 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
         const isMobile = el.clientWidth < 768;
         const pullback = isMobile ? 1.6 : 1.15;
 
-        camera.position.set(center.x, center.y, center.z + fitDist * pullback);
         camera.near = maxDim * 0.001;
         camera.far = maxDim * 20;
         camera.updateProjectionMatrix();
 
-        controls.target.copy(center);
+        // Build presets relative to bounding box
+        const d = fitDist * pullback;
+        presets = {
+          front: { label: 'Front', pos: new THREE.Vector3(center.x, center.y - d * 1.3, center.z - size.z * 0.35), target: new THREE.Vector3(center.x, center.y, center.z - size.z * 0.35) },
+          above: { label: 'Above', pos: new THREE.Vector3(center.x, center.y - d * 0.4, center.z + d * 0.9), target: center.clone() },
+          side: { label: 'Side', pos: new THREE.Vector3(center.x + d, center.y, center.z), target: center.clone() },
+          interior: { label: 'Interior', pos: new THREE.Vector3(center.x, center.y - d * 0.4, center.z - size.z * 0.35), target: new THREE.Vector3(center.x, center.y, center.z - size.z * 0.35) },
+        };
+
+        camera.position.copy(presets.front.pos);
+        controls.target.copy(presets.front.target);
         controls.update();
 
-        initialCam = { pos: camera.position.clone(), target: center.clone() };
-
+        lastInteraction = performance.now();
         setLoaded(true);
       } catch (err) {
         console.error('Point cloud load failed:', err);
@@ -185,7 +338,22 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
       const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 0.016;
       lastTime = time;
 
-      if (keys.size > 0) {
+      // Fly-to animation
+      if (flyAnim) {
+        flyAnim.progress += dt / flyAnim.duration;
+        if (flyAnim.progress >= 1) {
+          camera.position.copy(flyAnim.toPos);
+          controls.target.copy(flyAnim.toTarget);
+          flyAnim = null;
+        } else {
+          const t = easeInOutCubic(flyAnim.progress);
+          camera.position.lerpVectors(flyAnim.fromPos, flyAnim.toPos, t);
+          controls.target.lerpVectors(flyAnim.fromTarget, flyAnim.toTarget, t);
+        }
+      }
+
+      // Keyboard movement
+      if (keys.size > 0 && !flyAnim) {
         const speed = 20 * dt;
         const orbSpeed = 1.0 * dt;
         const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd);
@@ -204,7 +372,14 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
         if (keys.has('arrowup'))    { const o = camera.position.clone().sub(controls.target); o.applyAxisAngle(rt, orbSpeed);  camera.position.copy(controls.target).add(o); }
         if (keys.has('arrowdown'))  { const o = camera.position.clone().sub(controls.target); o.applyAxisAngle(rt, -orbSpeed); camera.position.copy(controls.target).add(o); }
 
-        if (keys.has('r') && initialCam) { camera.position.copy(initialCam.pos); controls.target.copy(initialCam.target); keys.delete('r'); }
+        setActivePreset(null);
+      }
+
+      // Auto-orbit
+      if (autoOrbit && !flyAnim && keys.size === 0 && (performance.now() - lastInteraction > AUTO_ORBIT_IDLE_MS)) {
+        const offset = camera.position.clone().sub(controls.target);
+        offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), AUTO_ORBIT_SPEED * dt);
+        camera.position.copy(controls.target).add(offset);
       }
 
       controls.update();
@@ -221,10 +396,11 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
       disposed = true;
       cancelAnimationFrame(animId);
       resizeObs.disconnect();
+      interactionEvents.forEach(evt => el.removeEventListener(evt, markInteraction));
+      renderer.domElement.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
       controls.dispose();
-      controlsObjRef.current = null;
       pointClouds.forEach(pc => { scene.remove(pc); pc.dispose(); });
       potreeRenderer?.dispose();
       renderer.dispose();
@@ -243,13 +419,21 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [loaded, skipAnimation, triggerComplete]);
 
-  // HUD
+  // HUD auto-show
   useEffect(() => {
     if (!showViewer || hudDismissed) return;
     const t1 = setTimeout(() => setShowHud(true), 1500);
-    const t2 = setTimeout(() => { setShowHud(false); setHudDismissed(true); }, 13000);
+    const t2 = setTimeout(() => { setShowHud(false); setHudDismissed(true); }, 8000);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [showViewer, hudDismissed]);
+
+  // Auto-show keyboard shortcuts on desktop (stays open until user closes)
+  useEffect(() => {
+    if (!showViewer || isTouch) return;
+    const t = setTimeout(() => setShowKbPanel(true), 2000);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showViewer]);
 
   // Fallback
   useEffect(() => {
@@ -270,17 +454,18 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
     document.fullscreenElement ? document.exitFullscreen() : containerRef.current.requestFullscreen();
   }, []);
 
+  // Close keyboard panel on Escape or outside click
   useEffect(() => {
-    const fn = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
-        if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-        toggleFullscreen();
-      }
-    };
-    window.addEventListener('keydown', fn);
-    return () => window.removeEventListener('keydown', fn);
-  }, [toggleFullscreen]);
+    if (!showKbPanel) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowKbPanel(false); };
+    const onClick = () => setShowKbPanel(false);
+    window.addEventListener('keydown', onKey);
+    setTimeout(() => window.addEventListener('click', onClick), 100);
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('click', onClick); };
+  }, [showKbPanel]);
+
+  const presetNames = ['front', 'above', 'side', 'interior'] as const;
+  const presetLabels: Record<string, string> = { front: 'Front', above: 'Above', side: 'Side', interior: 'Interior' };
 
   return (
     <div ref={containerRef} className="relative w-full h-full bg-white overflow-hidden">
@@ -327,7 +512,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
       {/* Fullscreen button */}
       <button
         onClick={toggleFullscreen}
-        className="absolute top-4 right-4 z-50 p-2 rounded-lg bg-black/5 hover:bg-black/10 backdrop-blur-sm transition-all duration-300 group"
+        className="absolute top-3 md:top-4 right-3 md:right-4 z-50 p-1.5 md:p-2 rounded-lg bg-black/5 hover:bg-black/10 backdrop-blur-sm transition-all duration-300 group"
         style={{ opacity: showViewer ? 0.7 : 0, pointerEvents: showViewer ? 'auto' : 'none', transition: 'opacity 0.8s ease, background-color 0.3s ease' }}
         title={isFullscreen ? 'Exit fullscreen (F)' : 'Fullscreen (F)'}
         aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
@@ -343,57 +528,120 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
         )}
       </button>
 
-      {/* HUD */}
-      <div
-        className="absolute bottom-6 left-4 z-40 pointer-events-none"
-        style={{ opacity: showHud ? 1 : 0, transform: showHud ? 'translateY(0)' : 'translateY(8px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}
+      {/* Auto-orbit toggle */}
+      <button
+        onClick={() => toggleAutoOrbitRef.current()}
+        className="absolute top-3 md:top-4 right-12 md:right-14 z-50 p-1.5 md:p-2 rounded-lg bg-black/5 hover:bg-black/10 backdrop-blur-sm transition-all duration-300 group"
+        style={{ opacity: showViewer ? 0.7 : 0, pointerEvents: showViewer ? 'auto' : 'none', transition: 'opacity 0.8s ease' }}
+        title={autoOrbitActive ? 'Pause auto-rotate (Space)' : 'Resume auto-rotate (Space)'}
+        aria-label={autoOrbitActive ? 'Pause auto-rotate' : 'Resume auto-rotate'}
       >
-        <div className="bg-black/60 backdrop-blur-md rounded-xl px-5 py-4 text-white pointer-events-auto max-w-xs">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white/80">CONTROLS</span>
-            <button onClick={() => { setShowHud(false); setHudDismissed(true); }} className="text-white/40 hover:text-white/80 transition-colors ml-4 -mr-1 -mt-1" aria-label="Dismiss controls">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-          </div>
-          {isTouch ? (
-            <div className="space-y-2 text-[11px] text-white/70">
-              <div className="flex items-center gap-3"><span className="text-white/50 w-20 flex-shrink-0">1 finger</span><span>Drag to orbit</span></div>
-              <div className="flex items-center gap-3"><span className="text-white/50 w-20 flex-shrink-0">Pinch</span><span>Zoom in / out</span></div>
-              <div className="flex items-center gap-3"><span className="text-white/50 w-20 flex-shrink-0">2 fingers</span><span>Drag to pan</span></div>
-            </div>
-          ) : (
-            <div className="space-y-2 text-[11px] text-white/70">
-              <div className="flex items-center gap-3"><div className="flex gap-0.5"><Kbd>W</Kbd><Kbd>A</Kbd><Kbd>S</Kbd><Kbd>D</Kbd></div><span>Move</span></div>
-              <div className="flex items-center gap-3"><div className="flex gap-0.5"><Kbd>Q</Kbd><Kbd>E</Kbd></div><span>Up / Down</span></div>
-              <div className="flex items-center gap-3">
-                <div className="flex gap-0.5"><Kbd className="text-[9px] px-1">&#9650;</Kbd><Kbd className="text-[9px] px-1">&#9660;</Kbd><Kbd className="text-[9px] px-1">&#9664;</Kbd><Kbd className="text-[9px] px-1">&#9654;</Kbd></div>
-                <span>Orbit</span>
-              </div>
-              <div className="flex items-center gap-3"><span className="text-white/50 w-20 flex-shrink-0">Mouse</span><span>Drag orbit &middot; Right pan</span></div>
-              <div className="flex items-center gap-3 pt-1 border-t border-white/10">
-                <div className="flex gap-0.5"><Kbd>R</Kbd></div><span>Reset</span>
-                <span className="text-white/30 mx-1">&middot;</span>
-                <div className="flex gap-0.5"><Kbd>F</Kbd></div><span>Fullscreen</span>
-              </div>
-            </div>
-          )}
+        {autoOrbitActive ? (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-600 group-hover:text-gray-900">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+          </svg>
+        ) : (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-400 group-hover:text-gray-600">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        )}
+      </button>
+
+      {/* Preset viewpoint buttons */}
+      <div
+        className="absolute bottom-14 md:bottom-6 right-2 md:right-4 z-40 flex flex-col gap-1 md:gap-1.5"
+        style={{ opacity: showViewer ? 1 : 0, pointerEvents: showViewer ? 'auto' : 'none', transition: 'opacity 0.8s ease' }}
+      >
+        {presetNames.map((name, i) => (
+          <button
+            key={name}
+            onClick={() => flyToPresetRef.current(name)}
+            className={`px-2 md:px-3 py-1 md:py-1.5 rounded-md md:rounded-lg text-[8px] md:text-[10px] tracking-[0.1em] uppercase font-medium backdrop-blur-sm transition-all duration-200 ${
+              activePreset === name
+                ? 'bg-gray-900 text-white'
+                : 'bg-black/5 text-gray-500 hover:bg-black/10 hover:text-gray-800'
+            }`}
+            title={`${presetLabels[name]} view (${i + 1})`}
+          >
+            {presetLabels[name]}
+          </button>
+        ))}
+      </div>
+
+      {/* Primary HUD (simple, auto-dismisses) */}
+      <div
+        className="absolute top-3 md:top-4 left-3 md:left-4 z-40 pointer-events-none max-w-[70%] md:max-w-none"
+        style={{ opacity: showHud ? 1 : 0, transform: showHud ? 'translateY(0)' : 'translateY(-6px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}
+      >
+        <div className="bg-black/50 backdrop-blur-md rounded-lg px-3 md:px-4 py-2 md:py-2.5 pointer-events-auto flex items-center gap-2 md:gap-3">
+          <span className="text-[9px] md:text-[11px] text-white/70">
+            {isTouch
+              ? 'Drag to orbit \u00b7 Pinch to zoom \u00b7 Double-tap to focus'
+              : 'Drag to orbit \u00b7 Right-click to pan \u00b7 Double-click to focus'
+            }
+          </span>
+          <button onClick={() => { setShowHud(false); setHudDismissed(true); }} className="text-white/30 hover:text-white/70 transition-colors flex-shrink-0" aria-label="Dismiss">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
       </div>
 
-      {/* Help button */}
-      {hudDismissed && showViewer && (
-        <button
-          onClick={() => { setHudDismissed(false); setShowHud(true); }}
-          className="absolute bottom-5 left-4 z-40 w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 backdrop-blur-sm flex items-center justify-center transition-all duration-300"
-          style={{ opacity: 0.6 }}
-          title="Show controls" aria-label="Show controls"
+      {/* Bottom-left toolbar: help + keyboard shortcuts */}
+      <div className="absolute bottom-12 md:bottom-5 left-3 md:left-4 z-40 flex items-center gap-1.5 md:gap-2" style={{ opacity: showViewer ? 1 : 0, pointerEvents: showViewer ? 'auto' : 'none', transition: 'opacity 0.8s ease' }}>
+        {/* Help button */}
+        {hudDismissed && (
+          <button
+            onClick={() => { setHudDismissed(false); setShowHud(true); }}
+            className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-black/8 hover:bg-black/15 backdrop-blur-sm flex items-center justify-center transition-all duration-300"
+            title="Show controls" aria-label="Show controls"
+          >
+            <span className="text-[10px] md:text-xs font-semibold text-gray-500">?</span>
+          </button>
+        )}
+
+        {/* Keyboard shortcuts button (desktop only) */}
+        {!isTouch && (
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowKbPanel(prev => !prev); }}
+            className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-black/8 hover:bg-black/15 backdrop-blur-sm flex items-center justify-center transition-all duration-300"
+            title="Keyboard shortcuts" aria-label="Keyboard shortcuts"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-500">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* Keyboard shortcuts popout panel (desktop only) */}
+      {showKbPanel && !isTouch && (
+        <div
+          className="absolute bottom-16 left-4 z-50 bg-black/75 backdrop-blur-lg rounded-xl px-5 py-4 text-white max-w-sm border border-white/10 shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
         >
-          <span className="text-xs font-semibold text-gray-600">?</span>
-        </button>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-white/70">KEYBOARD SHORTCUTS</span>
+            <button onClick={() => setShowKbPanel(false)} className="text-white/30 hover:text-white/70 transition-colors -mr-1 -mt-1" aria-label="Close">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-[11px] text-white/60">
+            <div className="flex items-center gap-2"><div className="flex gap-0.5"><Kbd>W</Kbd><Kbd>A</Kbd><Kbd>S</Kbd><Kbd>D</Kbd></div><span>Move</span></div>
+            <div className="flex items-center gap-2"><div className="flex gap-0.5"><Kbd>Q</Kbd><Kbd>E</Kbd></div><span>Up / Down</span></div>
+            <div className="flex items-center gap-2"><div className="flex gap-0.5"><Kbd>&#9650;</Kbd><Kbd>&#9660;</Kbd><Kbd>&#9664;</Kbd><Kbd>&#9654;</Kbd></div><span>Orbit</span></div>
+            <div className="flex items-center gap-2"><div className="flex gap-0.5"><Kbd>R</Kbd></div><span>Reset view</span></div>
+            <div className="col-span-2 border-t border-white/10 my-1" />
+            <div className="flex items-center gap-2"><div className="flex gap-0.5"><Kbd>1</Kbd><Kbd>2</Kbd><Kbd>3</Kbd><Kbd>4</Kbd></div><span>Viewpoints</span></div>
+            <div className="flex items-center gap-2"><Kbd>Space</Kbd><span>Auto-rotate</span></div>
+            <div className="flex items-center gap-2"><div className="flex gap-0.5"><Kbd>+</Kbd><Kbd>-</Kbd></div><span>Detail level</span></div>
+            <div className="flex items-center gap-2"><Kbd>F</Kbd><span>Fullscreen</span></div>
+            <div className="flex items-center gap-2"><Kbd>H</Kbd><span>Toggle HUD</span></div>
+          </div>
+        </div>
       )}
 
-      {/* Status */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none z-40 transition-opacity duration-1000" style={{ opacity: showViewer ? 0.6 : 0 }}>
+      {/* Status (hidden on mobile) */}
+      <div className="hidden md:block absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none z-30 transition-opacity duration-1000" style={{ opacity: showViewer ? 0.6 : 0 }}>
         <span className="text-[9px] text-gray-400 tracking-[0.25em] uppercase font-medium">NYPL MAIN HALL &mdash; INTERACTIVE 3D SCAN</span>
       </div>
     </div>
@@ -402,7 +650,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
 
 function Kbd({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded bg-white/15 border border-white/20 text-[10px] font-mono font-medium text-white/80 ${className}`}>
+    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded bg-white/10 border border-white/15 text-[9px] font-mono font-medium text-white/70 leading-none ${className}`}>
       {children}
     </span>
   );

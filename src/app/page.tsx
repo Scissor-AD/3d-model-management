@@ -39,7 +39,6 @@ const hubCards = [
 export default function Home() {
   const [animationDone, setAnimationDone] = useState(false);
   const [skipAnimation, setSkipAnimation] = useState(false);
-  const autoScrollFired = useRef(false);
   const heroWrapperRef = useRef<HTMLDivElement>(null);
 
   // Measure real visible viewport (immune to CSS zoom issues) and size the wrapper.
@@ -64,7 +63,6 @@ export default function Home() {
     if (window.location.hash === '#home') {
       setSkipAnimation(true);
       setAnimationDone(true);
-      autoScrollFired.current = true; // don't auto-scroll on hash nav
       requestAnimationFrame(() => {
         const el = document.getElementById('home');
         if (el) window.scrollTo({ top: el.offsetTop, behavior: 'auto' });
@@ -72,26 +70,6 @@ export default function Home() {
     }
   }, []);
 
-  // Auto-scroll to hub 3.5 s after animation finishes (unless user scrolls first)
-  useEffect(() => {
-    if (!animationDone || autoScrollFired.current) return;
-    autoScrollFired.current = true;
-
-    const timer = setTimeout(() => {
-      document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
-    }, 2000);
-
-    // Cancel auto-scroll if user initiates scroll / swipe
-    const cancel = () => clearTimeout(timer);
-    window.addEventListener('wheel', cancel, { once: true, passive: true });
-    window.addEventListener('touchstart', cancel, { once: true, passive: true });
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('wheel', cancel);
-      window.removeEventListener('touchstart', cancel);
-    };
-  }, [animationDone]);
 
   return (
     <div
