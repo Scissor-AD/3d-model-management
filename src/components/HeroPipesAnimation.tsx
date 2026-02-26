@@ -74,11 +74,14 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
-    const blockWheel = (e: WheelEvent) => {
-      if (!document.fullscreenElement) e.stopPropagation();
-    };
-    el.addEventListener('wheel', blockWheel, { capture: true, passive: false });
-    return () => el.removeEventListener('wheel', blockWheel, { capture: true } as EventListenerOptions);
+    const isTouch = 'ontouchstart' in window || window.matchMedia('(pointer: coarse)').matches;
+    if (isTouch) {
+      const blockWheel = (e: WheelEvent) => {
+        if (!document.fullscreenElement) e.stopPropagation();
+      };
+      el.addEventListener('wheel', blockWheel, { capture: true, passive: false });
+      return () => el.removeEventListener('wheel', blockWheel, { capture: true } as EventListenerOptions);
+    }
   }, []);
 
   // -----------------------------------------------------------------------
@@ -303,7 +306,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
         const fitDist = (maxDim / 2) / Math.tan(fov / 2);
 
         const isMobile = el.clientWidth < 768;
-        const pullback = isMobile ? 1.6 : 1.15;
+        const pullback = isMobile ? 1.45 : 1.15;
 
         camera.near = maxDim * 0.001;
         camera.far = maxDim * 20;
@@ -315,7 +318,7 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
           front: { label: 'Front', pos: new THREE.Vector3(center.x, center.y - d * 1.3, center.z - size.z * 0.35), target: new THREE.Vector3(center.x, center.y, center.z - size.z * 0.35) },
           above: { label: 'Above', pos: new THREE.Vector3(center.x, center.y - d * 0.4, center.z + d * 0.9), target: center.clone() },
           side: { label: 'Side', pos: new THREE.Vector3(center.x + d, center.y, center.z), target: center.clone() },
-          interior: { label: 'Interior', pos: new THREE.Vector3(center.x, center.y - d * 0.4, center.z - size.z * 0.35), target: new THREE.Vector3(center.x, center.y, center.z - size.z * 0.35) },
+          interior: { label: 'Interior', pos: new THREE.Vector3(center.x, center.y - d * (isMobile ? 0.25 : 0.4), center.z - size.z * 0.35), target: new THREE.Vector3(center.x, center.y, center.z - size.z * 0.35) },
         };
 
         camera.position.copy(presets.front.pos);
