@@ -1,33 +1,35 @@
 import { MongoClient, Db } from 'mongodb';
 
-const MONGO_URL = process.env.MONGO_URL;
-
-if (!MONGO_URL) {
-  throw new Error('MONGO_URL environment variable is not set');
-}
-
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
-
 declare global {
   // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-if (process.env.NODE_ENV === 'development') {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(MONGO_URL);
-    global._mongoClientPromise = client.connect();
+let clientPromise: Promise<MongoClient> | null = null;
+
+function getClientPromise(): Promise<MongoClient> {
+  if (clientPromise) return clientPromise;
+
+  const url = process.env.MONGO_URL;
+  if (!url) {
+    throw new Error('MONGO_URL environment variable is not set');
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  client = new MongoClient(MONGO_URL);
-  clientPromise = client.connect();
+
+  if (process.env.NODE_ENV === 'development') {
+    if (!global._mongoClientPromise) {
+      global._mongoClientPromise = new MongoClient(url).connect();
+    }
+    clientPromise = global._mongoClientPromise;
+  } else {
+    clientPromise = new MongoClient(url).connect();
+  }
+
+  return clientPromise;
 }
 
-export default clientPromise;
+export default getClientPromise;
 
 export async function getDb(dbName = '3dmm'): Promise<Db> {
-  const client = await clientPromise;
+  const client = await getClientPromise();
   return client.db(dbName);
 }
