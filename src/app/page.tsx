@@ -103,9 +103,6 @@ export default function Home() {
                     className="flex flex-col items-center gap-1.5 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
                     aria-label="Scroll to explore"
                   >
-                    <span className="text-[10px] tracking-[0.2em] uppercase font-display font-medium">
-                      EXPLORE
-                    </span>
                     <svg
                       className="w-4 h-4 animate-bounce-subtle"
                       fill="none"

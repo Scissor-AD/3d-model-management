@@ -105,9 +105,8 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
             style={{ transition: 'opacity 1s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
           >
             <div className="md:hidden rounded-lg border border-[var(--border)] bg-white/80 backdrop-blur-sm px-2 py-2">
-              <div className="grid grid-cols-3 divide-x divide-[var(--border)]">
+              <div className="grid grid-cols-2 divide-x divide-[var(--border)]">
                 <SquareFootageCounter targetValue={240000000} duration={2200} label="SQ FT SCANNED" suffix="sq ft" slowIncrementRate={0.15} />
-                <SquareFootageCounter targetValue={850} duration={2600} label="PROJECTS" suffix="" slowIncrementRate={0} />
                 <SquareFootageCounter targetValue={98} duration={2800} label="ON TIME" suffix="%" slowIncrementRate={0} />
               </div>
             </div>
