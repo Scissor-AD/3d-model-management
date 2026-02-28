@@ -89,7 +89,7 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
         <>
           <div
             className={`
-              relative z-10 order-2 mt-4 md:mt-6 text-center flex-shrink-0
+              relative z-10 order-2 mt-4 md:mt-4 text-center flex-shrink-0
               ${showTagline ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}
             `}
             style={{
@@ -101,7 +101,7 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
           </div>
 
           <div
-            className={`relative z-10 order-3 mt-3 md:mt-6 w-full max-w-4xl flex-shrink-0 px-4 md:px-0 ${showCounters[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+            className={`relative z-10 order-3 mt-3 md:mt-4 w-full max-w-4xl flex-shrink-0 px-4 md:px-0 ${showCounters[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
             style={{ transition: 'opacity 1s cubic-bezier(0.25, 0.1, 0.25, 1), transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
           >
             <div className="md:hidden rounded-lg border border-[var(--border)] bg-white/80 backdrop-blur-sm px-2 py-2">
