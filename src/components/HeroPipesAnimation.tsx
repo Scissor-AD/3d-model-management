@@ -75,14 +75,11 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
   useEffect(() => {
     const el = canvasRef.current;
     if (!el) return;
-    const isTouch = 'ontouchstart' in window || window.matchMedia('(pointer: coarse)').matches;
-    if (isTouch) {
-      const blockWheel = (e: WheelEvent) => {
-        if (!(document.fullscreenElement || (document as any).webkitFullscreenElement)) e.stopPropagation();
-      };
-      el.addEventListener('wheel', blockWheel, { capture: true, passive: false });
-      return () => el.removeEventListener('wheel', blockWheel, { capture: true } as EventListenerOptions);
-    }
+    const blockWheel = (e: WheelEvent) => {
+      if (!(document.fullscreenElement || (document as any).webkitFullscreenElement)) e.stopPropagation();
+    };
+    el.addEventListener('wheel', blockWheel, { capture: true, passive: false });
+    return () => el.removeEventListener('wheel', blockWheel, { capture: true } as EventListenerOptions);
   }, []);
 
   // -----------------------------------------------------------------------
@@ -549,24 +546,6 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
         )}
       </button>
 
-      {/* Auto-orbit toggle (desktop only) */}
-      <button
-        onClick={() => toggleAutoOrbitRef.current()}
-        className="hidden md:block absolute top-3 md:top-4 right-12 md:right-14 z-50 p-1.5 md:p-2 rounded-lg bg-black/5 hover:bg-black/10 backdrop-blur-sm transition-all duration-300 group"
-        style={{ opacity: showViewer ? 0.7 : 0, pointerEvents: showViewer ? 'auto' : 'none', transition: 'opacity 0.8s ease' }}
-        title={autoOrbitActive ? 'Pause auto-rotate (Space)' : 'Resume auto-rotate (Space)'}
-        aria-label={autoOrbitActive ? 'Pause auto-rotate' : 'Resume auto-rotate'}
-      >
-        {autoOrbitActive ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-600 group-hover:text-gray-900">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
-          </svg>
-        ) : (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gray-400 group-hover:text-gray-600">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
-          </svg>
-        )}
-      </button>
 
       {/* Preset viewpoint buttons */}
       <div
