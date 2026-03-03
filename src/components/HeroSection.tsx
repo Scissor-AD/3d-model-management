@@ -110,7 +110,7 @@ export default function HeroSection({ onComplete, skipAnimation = false }: HeroS
                 <SquareFootageCounter targetValue={98} duration={2800} label="ON TIME" suffix="%" slowIncrementRate={0} />
               </div>
             </div>
-            <div className="hidden md:flex md:justify-evenly">
+            <div className="hidden md:flex md:justify-center md:gap-[clamp(2rem,6vw,6rem)]">
               <SquareFootageCounter targetValue={240000000} duration={2200} label="SQUARE FEET SCANNED" suffix="sq ft" slowIncrementRate={0.15} />
               <SquareFootageCounter targetValue={850} duration={2600} label="PROJECTS DELIVERED" suffix="" slowIncrementRate={0} />
               <SquareFootageCounter targetValue={98} duration={2800} label="ON TIME DELIVERY PERCENTAGE" suffix="%" slowIncrementRate={0} />

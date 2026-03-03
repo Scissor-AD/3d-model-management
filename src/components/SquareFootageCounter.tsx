@@ -115,18 +115,24 @@ export default function SquareFootageCounter({
     >
       <div className={`flex items-baseline ${suffix ? 'gap-1 md:gap-1.5' : ''}`}>
         <span 
-          className="font-display text-sm md:text-2xl lg:text-3xl font-bold md:font-semibold tracking-tight tabular-nums"
-          style={{ fontVariantNumeric: 'tabular-nums' }}
+          className="font-display text-sm font-bold md:font-semibold tracking-tight tabular-nums"
+          style={{ fontVariantNumeric: 'tabular-nums', fontSize: 'clamp(0.875rem, 1.2vw + 0.5rem, 1.875rem)' }}
         >
           {formatNumber(count)}
         </span>
         {suffix && (
-          <span className="font-display text-[9px] md:text-sm lg:text-base text-[var(--muted)] font-medium">
+          <span
+            className="font-display text-[var(--muted)] font-medium"
+            style={{ fontSize: 'clamp(9px, 0.5vw + 6px, 1rem)' }}
+          >
             {suffix}
           </span>
         )}
       </div>
-      <span className="font-display text-[7px] md:text-[11px] tracking-[0.08em] md:tracking-[0.2em] text-[var(--muted)] uppercase text-center leading-tight">
+      <span
+        className="font-display text-[var(--muted)] uppercase text-center leading-tight"
+        style={{ fontSize: 'clamp(7px, 0.3vw + 5px, 11px)', letterSpacing: 'clamp(0.08em, 0.5vw, 0.2em)' }}
+      >
         {label}
       </span>
     </div>
