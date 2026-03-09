@@ -35,15 +35,14 @@ export default function AnimatedTagline() {
   useEffect(() => {
     const interval = setInterval(() => {
       setIsAnimating(true);
-      
-      // After exit animation completes, change the text
+
       setTimeout(() => {
         setDisplayIndex((prev) => (prev + 1) % taglines.length);
         setIsAnimating(false);
       }, 550);
-      
+
       setCurrentIndex((prev) => (prev + 1) % taglines.length);
-    }, 4000); // Change every 4 seconds
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
@@ -52,7 +51,7 @@ export default function AnimatedTagline() {
 
   return (
     <h1 className="hero-tagline relative overflow-hidden">
-      <span 
+      <span
         className={`tagline-text inline-block ${isAnimating ? 'tagline-exit' : 'tagline-enter'}`}
         key={displayIndex}
       >

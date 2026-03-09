@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import ControlBar from '@/components/ControlBar';
@@ -37,32 +37,9 @@ const hubCards = [
 ];
 
 export default function Home() {
-  const [animationDone, setAnimationDone] = useState(false);
-  const [skipAnimation, setSkipAnimation] = useState(false);
-  const heroWrapperRef = useRef<HTMLDivElement>(null);
-
-  // Measure real visible viewport (immune to CSS zoom issues) and size the wrapper.
-  // With html { zoom: 0.8 }, CSS vh/innerHeight undercount the visible area.
-  // Dividing by the zoom factor gives the correct CSS-pixel height to fill the screen.
-  const syncWrapperHeight = useCallback(() => {
-    if (heroWrapperRef.current) {
-      const zoom = parseFloat(getComputedStyle(document.documentElement).zoom) || 1;
-      const visibleHeight = Math.ceil(window.innerHeight / zoom);
-      heroWrapperRef.current.style.height = `${visibleHeight}px`;
-    }
-  }, []);
-
-  useEffect(() => {
-    syncWrapperHeight();
-    window.addEventListener('resize', syncWrapperHeight);
-    return () => window.removeEventListener('resize', syncWrapperHeight);
-  }, [syncWrapperHeight]);
-
-  // Detect /#home hash — skip animation and scroll straight to hub
+  // Scroll to hub when opening with /#home
   useEffect(() => {
     if (window.location.hash === '#home') {
-      setSkipAnimation(true);
-      setAnimationDone(true);
       requestAnimationFrame(() => {
         const el = document.getElementById('home');
         if (el) window.scrollTo({ top: el.offsetTop, behavior: 'auto' });
@@ -70,55 +47,18 @@ export default function Home() {
     }
   }, []);
 
-
   return (
-    <div
-      className={`min-h-screen flex flex-col bg-white ${
-        !animationDone ? 'h-screen overflow-hidden' : ''
-      }`}
-    >
+    <div className="min-h-screen flex flex-col bg-white">
       <Navigation />
 
       <main className="flex-1">
-        {/* ── Hero Viewport Wrapper — clips to screen so hub never peeks ── */}
-        <div ref={heroWrapperRef} className="overflow-hidden bg-white" style={{ height: '100vh' }}>
-          <div className="pt-[var(--nav-height)] h-full">
-            <section className="relative h-full flex flex-col items-center justify-center px-6 md:px-12 lg:px-16 overflow-hidden">
-              <div className="absolute inset-0 bg-white" />
+        {/* Hero — fills viewport so "WHAT WE DO" is below the fold (accounts for zoom/large screens) */}
+        <div className="min-h-[100dvh] h-[100dvh] overflow-hidden bg-white hero-first-screen">
+          <div className="pt-[var(--nav-height)] h-[calc(100dvh-var(--nav-height))] min-h-0 relative flex flex-col">
+            <section className="relative flex-1 min-h-full flex flex-col items-center justify-center px-6 md:px-12 lg:px-16 overflow-hidden">
+              <div className="absolute inset-0 bg-white pointer-events-none" aria-hidden />
 
-              <HeroSection
-                onComplete={() => setAnimationDone(true)}
-                skipAnimation={skipAnimation}
-              />
-
-              {/* Scroll indicator — appears after animation finishes */}
-              {animationDone && (
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-fade-in">
-                  <button
-                    onClick={() =>
-                      document
-                        .getElementById('home')
-                        ?.scrollIntoView({ behavior: 'smooth' })
-                    }
-                    className="flex flex-col items-center gap-1.5 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-                    aria-label="Scroll to explore"
-                  >
-                    <svg
-                      className="w-4 h-4 animate-bounce-subtle"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 14l-7 7m0 0l-7-7"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              )}
+              <HeroSection />
             </section>
           </div>
         </div>

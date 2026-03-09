@@ -5,12 +5,16 @@ import Navigation from '@/components/Navigation';
 
 type TabKey = 'about' | 'digital-twin' | 'case-study' | 'work-with-us';
 
-const tabs: { key: TabKey; label: string }[] = [
+const ALL_TABS: { key: TabKey; label: string }[] = [
   { key: 'about', label: 'ABOUT' },
   { key: 'digital-twin', label: 'DIGITAL TWIN' },
   { key: 'case-study', label: 'CASE STUDY' },
   { key: 'work-with-us', label: 'WORK WITH US' },
 ];
+
+// Hide case study until ready
+const SHOW_CASE_STUDY = false;
+const tabs = SHOW_CASE_STUDY ? ALL_TABS : ALL_TABS.filter((t) => t.key !== 'case-study');
 
 const aboutContent = {
   intro: {
@@ -122,8 +126,10 @@ export default function StrategicAlliesPage() {
     }
   };
 
+  const effectiveTab = !SHOW_CASE_STUDY && activeTab === 'case-study' ? 'about' : activeTab;
+
   const renderContent = () => {
-    switch (activeTab) {
+    switch (effectiveTab) {
       case 'about':
         return (
           <div className="space-y-8">
@@ -319,12 +325,12 @@ export default function StrategicAlliesPage() {
   };
 
   return (
-    <div className="min-h-screen lg:h-screen lg:max-h-screen flex flex-col lg:overflow-hidden">
+    <div className="min-h-screen flex flex-col">
       <Navigation />
 
-      <main className="flex-1 pt-[var(--nav-height)] lg:h-[calc(100vh-var(--nav-height))] lg:overflow-hidden">
-        <section className="mx-4 md:mx-8 my-6 md:my-10 lg:my-6 bg-[var(--surface)] min-h-[calc(100vh-var(--nav-height)-3rem)] lg:h-[calc(100vh-var(--nav-height)-3rem)] lg:overflow-hidden lg:flex lg:flex-col">
-          <div className="p-6 md:p-10 lg:p-8 lg:flex-1 lg:flex lg:flex-col lg:overflow-hidden">
+      <main className="flex-1 pt-[var(--nav-height)]">
+        <section className="mx-4 md:mx-8 my-6 md:my-10 lg:my-6 bg-[var(--surface)]">
+          <div className="p-6 md:p-10 lg:p-8">
             {/* Page Title */}
             <h1 className="section-heading mb-6">STRATEGIC ALLIES</h1>
 
@@ -400,7 +406,7 @@ export default function StrategicAlliesPage() {
             )}
 
             {/* Tab Content */}
-            <div className="animate-fade-in mb-10 lg:mb-0 lg:flex-1 lg:overflow-auto scrollbar-hide" key={activeTab}>
+            <div className="animate-fade-in mb-10" key={effectiveTab}>
               {renderContent()}
             </div>
           </div>

@@ -8,6 +8,7 @@ interface SquareFootageCounterProps {
   label?: string;
   suffix?: string;
   slowIncrementRate?: number; // SF per second after reaching target
+  variant?: 'default' | 'hero';
 }
 
 export default function SquareFootageCounter({
@@ -16,7 +17,9 @@ export default function SquareFootageCounter({
   label = 'SQUARE FEET CAPTURED',
   suffix = 'SF',
   slowIncrementRate = 3, // ~3 SF per second after reaching target
+  variant = 'default',
 }: SquareFootageCounterProps) {
+  const isHero = variant === 'hero';
   const [count, setCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [isSlowCounting, setIsSlowCounting] = useState(false);
@@ -115,18 +118,18 @@ export default function SquareFootageCounter({
     >
       <div className={`flex items-baseline ${suffix ? 'gap-1 md:gap-1.5' : ''}`}>
         <span 
-          className="font-display text-sm md:text-2xl lg:text-3xl font-bold md:font-semibold tracking-tight tabular-nums"
+          className={`font-display tracking-tight tabular-nums ${isHero ? 'text-[1.1rem] md:text-[1.375rem] lg:text-[1.65rem] font-bold' : 'text-sm md:text-2xl lg:text-3xl font-bold md:font-semibold'}`}
           style={{ fontVariantNumeric: 'tabular-nums' }}
         >
           {formatNumber(count)}
         </span>
         {suffix && (
-          <span className="font-display text-[9px] md:text-sm lg:text-base text-[var(--muted)] font-medium">
+          <span className={`font-display text-[var(--muted)] font-medium ${isHero ? 'text-[10px] md:text-[13px] lg:text-[15px]' : 'text-[9px] md:text-sm lg:text-base'}`}>
             {suffix}
           </span>
         )}
       </div>
-      <span className="font-display text-[7px] md:text-[11px] tracking-[0.08em] md:tracking-[0.2em] text-[var(--muted)] uppercase text-center leading-tight">
+      <span className={`font-display tracking-[0.08em] md:tracking-[0.2em] text-[var(--muted)] uppercase text-center leading-tight ${isHero ? 'text-[8px] md:text-[11px] lg:text-[12px]' : 'text-[7px] md:text-[11px]'}`}>
         {label}
       </span>
     </div>

@@ -57,6 +57,15 @@ body {
   overflow-x: hidden;
 }
 
+/* Hero first screen: fill viewport so "WHAT WE DO" is below the fold (works with html zoom) */
+.hero-first-screen {
+  min-height: 125vh;
+  height: 125vh;
+}
+.hero-first-screen > div {
+  height: calc(125vh - var(--nav-height));
+}
+
 /* Desktop: prevent horizontal scroll only */
 @media (min-width: 1024px) {
   html, body {
@@ -223,7 +232,7 @@ input:focus, select:focus, textarea:focus {
 /* Hero Section */
 .hero-tagline {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.8vw, 2rem);
+  font-size: clamp(1.1rem, 2.42vw, 1.65rem);
   font-weight: 400;
   letter-spacing: 0.04em;
   word-spacing: 0.08em;

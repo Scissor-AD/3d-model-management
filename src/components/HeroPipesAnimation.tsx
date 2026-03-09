@@ -15,10 +15,6 @@ function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-interface HeroPipesAnimationProps {
-  onComplete?: () => void;
-  skipAnimation?: boolean;
-}
 
 interface FlyAnim {
   fromPos: THREE.Vector3;
@@ -43,7 +39,7 @@ function useIsTouchDevice() {
   return isTouch;
 }
 
-export default function HeroPipesAnimation({ onComplete, skipAnimation = false }: HeroPipesAnimationProps) {
+export default function HeroPipesAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
@@ -54,8 +50,6 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
   const [showKbPanel, setShowKbPanel] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>('front');
   const [autoOrbitActive, setAutoOrbitActive] = useState(false);
-  const onCompleteRef = useRef(onComplete);
-  const hasCompletedRef = useRef(false);
   const isTouch = useIsTouchDevice();
   const initedRef = useRef(false);
 
@@ -63,14 +57,6 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
   const toggleAutoOrbitRef = useRef<() => void>(() => {});
   const adjustBudgetRef = useRef<(delta: number) => void>(() => {});
   const toggleFsRef = useRef<() => void>(() => {});
-
-  useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
-
-  const triggerComplete = useCallback(() => {
-    if (hasCompletedRef.current) return;
-    hasCompletedRef.current = true;
-    onCompleteRef.current?.();
-  }, []);
 
   useEffect(() => {
     const el = canvasRef.current;
@@ -408,14 +394,10 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reveal
+  // Show viewer as soon as point cloud is loaded — simple fade-in, no delayed reveal
   useEffect(() => {
-    if (!loaded) return;
-    if (skipAnimation) { setShowViewer(true); triggerComplete(); return; }
-    const t1 = setTimeout(() => setShowViewer(true), 200);
-    const t2 = setTimeout(() => triggerComplete(), 1600);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [loaded, skipAnimation, triggerComplete]);
+    if (loaded) setShowViewer(true);
+  }, [loaded]);
 
   // HUD auto-show
   useEffect(() => {
@@ -433,12 +415,11 @@ export default function HeroPipesAnimation({ onComplete, skipAnimation = false }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showViewer]);
 
-  // Fallback
+  // Fallback: consider loaded after 15s if point cloud never signals
   useEffect(() => {
-    if (skipAnimation) { setLoaded(true); return; }
     const t = setTimeout(() => { if (!loaded) setLoaded(true); }, 15000);
     return () => clearTimeout(t);
-  }, [skipAnimation, loaded]);
+  }, [loaded]);
 
   // Fullscreen tracking
   useEffect(() => {

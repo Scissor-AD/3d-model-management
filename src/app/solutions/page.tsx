@@ -156,32 +156,50 @@ export default function SolutionsPage() {
           </div>
         );
 
-      case 'digital-production':
-        return (
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 md:gap-x-12 gap-y-8 md:gap-y-10">
-              {digitalProductionContent.sections.map((section) => (
-                <div key={section.title}>
-                  <h3 className="font-display text-sm font-semibold tracking-wide mb-3">
-                    {section.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
-                    {section.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <p className="text-base text-[var(--muted)] mt-6 lg:mt-4 lg:text-sm">
-              Have a project in mind that's not listed here? Contact us with a description of your goals, and we'll assess how we can support your vision.
+      case 'digital-production': {
+        const sections = digitalProductionContent.sections;
+        const renderSection = (section: (typeof sections)[0]) => (
+          <div key={section.title}>
+            <h3 className="font-display text-sm font-semibold tracking-wide mb-3">
+              {section.title}
+            </h3>
+            <p className="text-sm leading-relaxed text-[var(--foreground)] text-justify">
+              {section.description}
             </p>
-            <button
-              onClick={() => window.dispatchEvent(new Event('open-contact-drawer'))}
-              className="mt-4 lg:mt-3 px-6 py-3 lg:py-2 bg-white border border-[var(--foreground)] text-[var(--foreground)] font-display text-sm font-medium tracking-wide hover:bg-[var(--foreground)] hover:text-white transition-colors"
-            >
-              CONTACT US
-            </button>
           </div>
         );
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-12 gap-y-8 lg:gap-y-10">
+            {/* Left column: sections 0, 2, 4 + paragraph + button — single flex column so they flow naturally */}
+            <div className="flex flex-col gap-y-8 lg:gap-y-10">
+              {renderSection(sections[0])}
+              {renderSection(sections[2])}
+              {renderSection(sections[4])}
+              <p className="text-base text-[var(--muted)] lg:text-sm">
+                Have a project in mind that's not listed here? Contact us with a description of your goals, and we'll assess how we can support your vision.
+              </p>
+              <button
+                onClick={() => window.dispatchEvent(new Event('open-contact-drawer'))}
+                className="mt-0 px-6 py-3 lg:py-2 bg-white border border-[var(--foreground)] text-[var(--foreground)] font-display text-sm font-medium tracking-wide hover:bg-[var(--foreground)] hover:text-white transition-colors w-fit"
+              >
+                LET&apos;S CONNECT
+              </button>
+            </div>
+            {/* Right column: sections 1, 3 + image below */}
+            <div className="flex flex-col gap-y-8 lg:gap-y-10 order-last lg:order-none">
+              {renderSection(sections[1])}
+              {renderSection(sections[3])}
+              <div className="w-full mt-2">
+                <img
+                  src="/digital-production-hero.png"
+                  alt="3D BIM model of industrial facility"
+                  className="w-full max-h-[280px] lg:max-h-[320px] object-contain"
+                />
+              </div>
+            </div>
+          </div>
+        );
+      }
 
       case 'equipment-software': {
         const logos = [
@@ -291,13 +309,11 @@ export default function SolutionsPage() {
               </nav>
             </div>
 
-            {/* Tab Content */}
+            {/* Tab Content — digital-production: 2-col text with image under second column (inside renderContent) */}
             <div className="animate-fade-in mb-6 lg:mb-4 lg:flex-shrink-0" key={activeTab}>
               {renderContent()}
             </div>
-
-            {/* Asset Image / Video - only show for non equipment-software tabs */}
-            {activeTab !== 'equipment-software' && (
+            {activeTab !== 'equipment-software' && activeTab !== 'digital-production' && (
               <div className="w-full mt-auto lg:flex-1 lg:min-h-0">
                 {activeTab === 'reality-capture' && (
                   <video
@@ -308,13 +324,6 @@ export default function SolutionsPage() {
                     playsInline
                     loop
                     className="w-full h-full object-cover"
-                  />
-                )}
-                {activeTab === 'digital-production' && (
-                  <img
-                    src="/digital-production-hero.png"
-                    alt="3D BIM model of industrial facility"
-                    className="w-full max-h-[280px] lg:max-h-[320px] object-contain"
                   />
                 )}
               </div>
