@@ -18,6 +18,7 @@
   --control-bar-height: 60px;
   --control-bar-expanded-height: 400px;
   --nav-height: 64px;
+  --hero-viewer-height: calc(100dvh - var(--nav-height) - 220px);
 }
 
 @media (min-width: 1024px) {
