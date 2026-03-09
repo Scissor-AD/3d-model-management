@@ -7,6 +7,7 @@ import { OrbitControls } from 'three-stdlib';
 const POINT_CLOUD_URL = 'cloud.js';
 const POINT_CLOUD_BASE = 'https://3dmodelmanagement.github.io/nypl/pointclouds/nypl_main_hall/';
 const INITIAL_POINT_BUDGET = 1_000_000;
+const MOBILE_POINT_BUDGET = 250_000;
 const AUTO_ORBIT_SPEED = 0.12;
 const AUTO_ORBIT_IDLE_MS = 5000;
 const FLY_DURATION = 1.2;
@@ -84,11 +85,12 @@ export default function HeroPipesAnimation() {
 
     const w = el.clientWidth || 1;
     const h = el.clientHeight || 1;
+    const isMobileViewport = w < 768;
     const camera = new THREE.PerspectiveCamera(60, w / h, 0.1, 50000);
     camera.up.set(0, 0, 1);
 
     const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(isMobileViewport ? 1 : Math.min(window.devicePixelRatio, 2));
     renderer.setSize(w, h);
     renderer.setClearColor(0xffffff, 1);
     renderer.toneMapping = THREE.NoToneMapping;
@@ -112,7 +114,7 @@ export default function HeroPipesAnimation() {
     let autoOrbit = false;
     let flyAnim: FlyAnim | null = null;
     let presets: Record<string, Preset> = {};
-    let pointBudget = INITIAL_POINT_BUDGET;
+    let pointBudget = isMobileViewport ? MOBILE_POINT_BUDGET : INITIAL_POINT_BUDGET;
 
     const markInteraction = () => { lastInteraction = performance.now(); };
     const interactionEvents = ['pointerdown', 'pointerup', 'pointermove', 'touchstart', 'touchmove'];
@@ -286,8 +288,7 @@ export default function HeroPipesAnimation() {
         const fov = camera.fov * (Math.PI / 180);
         const fitDist = (maxDim / 2) / Math.tan(fov / 2);
 
-        const isMobile = el.clientWidth < 768;
-        const pullback = isMobile ? 1.45 : 1.15;
+        const pullback = isMobileViewport ? 1.45 : 1.15;
 
         camera.near = maxDim * 0.001;
         camera.far = maxDim * 20;
@@ -299,7 +300,7 @@ export default function HeroPipesAnimation() {
           front: { label: 'Front', pos: new THREE.Vector3(center.x, center.y - d * 1.3, center.z - size.z * 0.35), target: new THREE.Vector3(center.x, center.y, center.z - size.z * 0.35) },
           above: { label: 'Above', pos: new THREE.Vector3(center.x, center.y - d * 0.4, center.z + d * 0.9), target: center.clone() },
           side: { label: 'Side', pos: new THREE.Vector3(center.x + d, center.y, center.z), target: center.clone() },
-          interior: { label: 'Interior', pos: new THREE.Vector3(center.x, center.y - d * (isMobile ? 0.25 : 0.4), center.z - size.z * 0.35), target: new THREE.Vector3(center.x, center.y, center.z - size.z * 0.35) },
+          interior: { label: 'Interior', pos: new THREE.Vector3(center.x, center.y - d * (isMobileViewport ? 0.25 : 0.4), center.z - size.z * 0.35), target: new THREE.Vector3(center.x, center.y, center.z - size.z * 0.35) },
         };
 
         camera.position.copy(presets.front.pos);
