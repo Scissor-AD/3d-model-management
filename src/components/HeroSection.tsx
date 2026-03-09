@@ -33,6 +33,9 @@ export default function HeroSection() {
             <SquareFootageCounter targetValue={240000000} duration={2200} label="SQ FT SCANNED" suffix="sq ft" slowIncrementRate={0.15} />
             <SquareFootageCounter targetValue={98} duration={2800} label="ON TIME" suffix="%" slowIncrementRate={0} />
           </div>
+          <div className="border-t border-[var(--border)] pt-2 mt-2 flex justify-center">
+            <SquareFootageCounter targetValue={850} duration={2600} label="PROJECTS DELIVERED" suffix="" slowIncrementRate={0} />
+          </div>
         </div>
       </div>
     </div>

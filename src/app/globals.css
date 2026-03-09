@@ -43,6 +43,7 @@
 }
 
 html {
+  font-size: 105%;
   scroll-behavior: smooth;
   zoom: 0.8;
   background: #FFFFFF;
@@ -146,7 +147,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Form Styles */
 input, select, textarea {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 input:focus, select:focus, textarea:focus {
@@ -162,7 +163,7 @@ input:focus, select:focus, textarea:focus {
   padding: 12px 24px;
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -178,7 +179,7 @@ input:focus, select:focus, textarea:focus {
   padding: 10px 22px;
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -200,7 +201,7 @@ input:focus, select:focus, textarea:focus {
 .accordion-trigger::before {
   content: '+';
   font-weight: 500;
-  font-size: 18px;
+  font-size: 1.125rem;
   transition: transform 0.2s ease;
 }
 
@@ -238,6 +239,12 @@ input:focus, select:focus, textarea:focus {
   word-spacing: 0.08em;
   line-height: 1.35;
   text-align: center;
+}
+
+@media (min-width: 768px) {
+  .hero-tagline {
+    font-size: clamp(1.155rem, 2.541vw, 1.73rem);
+  }
 }
 
 /* Section Headings - matches hero tagline size */

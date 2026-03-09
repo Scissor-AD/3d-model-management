@@ -118,18 +118,18 @@ export default function SquareFootageCounter({
     >
       <div className={`flex items-baseline ${suffix ? 'gap-1 md:gap-1.5' : ''}`}>
         <span 
-          className={`font-display tracking-tight tabular-nums ${isHero ? 'text-[1.1rem] md:text-[1.375rem] lg:text-[1.65rem] font-bold' : 'text-sm md:text-2xl lg:text-3xl font-bold md:font-semibold'}`}
+          className={`font-display tracking-tight tabular-nums ${isHero ? 'text-[1.1rem] md:text-[1.44rem] lg:text-[1.73rem] font-bold' : 'text-sm md:text-2xl lg:text-3xl font-bold md:font-semibold'}`}
           style={{ fontVariantNumeric: 'tabular-nums' }}
         >
           {formatNumber(count)}
         </span>
         {suffix && (
-          <span className={`font-display text-[var(--muted)] font-medium ${isHero ? 'text-[10px] md:text-[13px] lg:text-[15px]' : 'text-[9px] md:text-sm lg:text-base'}`}>
+          <span className={`font-display text-[var(--muted)] font-medium ${isHero ? 'text-[10px] md:text-[14px] lg:text-[16px]' : 'text-[9px] md:text-sm lg:text-base'}`}>
             {suffix}
           </span>
         )}
       </div>
-      <span className={`font-display tracking-[0.08em] md:tracking-[0.2em] text-[var(--muted)] uppercase text-center leading-tight ${isHero ? 'text-[8px] md:text-[11px] lg:text-[12px]' : 'text-[7px] md:text-[11px]'}`}>
+      <span className={`font-display tracking-[0.08em] md:tracking-[0.2em] text-[var(--muted)] uppercase text-center leading-tight ${isHero ? 'text-[8px] md:text-[12px] lg:text-[13px]' : 'text-[7px] md:text-[11px]'}`}>
         {label}
       </span>
     </div>
