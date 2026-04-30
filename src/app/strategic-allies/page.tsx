@@ -33,6 +33,15 @@ const aboutContent = {
       'Cloud platform and data management solutions',
     ],
   },
+  clientPartnerships: {
+    title: 'CLIENT PARTNERSHIPS',
+    bullets: [
+      'Global Enterprise Owner-Operators',
+      'National Real Estate Investment & Development Firms',
+      'Design & Construction Program Leaders',
+      'Global Workplace & Flexible Space Operators',
+    ],
+  },
 };
 
 const digitalTwinContent = {
@@ -149,19 +158,34 @@ export default function StrategicAlliesPage() {
               </div>
             </div>
 
-            {/* Partners */}
-            <div>
-              <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
-                {aboutContent.partners.title}
-              </h3>
-              <ul className="space-y-2">
-                {aboutContent.partners.bullets.map((bullet, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-sm leading-relaxed">
-                    <span className="mt-1.5 w-1.5 h-1.5 bg-[var(--foreground)] rounded-full flex-shrink-0" />
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
+            {/* Partners — desktop: two columns; mobile: Technology Partners, then Client Partnerships */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12">
+              <div>
+                <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
+                  {aboutContent.partners.title}
+                </h3>
+                <ul className="space-y-2">
+                  {aboutContent.partners.bullets.map((bullet, idx) => (
+                    <li key={idx} className="flex items-start gap-3 text-sm leading-relaxed">
+                      <span className="mt-1.5 w-1.5 h-1.5 bg-[var(--foreground)] rounded-full flex-shrink-0" />
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-display text-sm font-semibold tracking-wide mb-4">
+                  {aboutContent.clientPartnerships.title}
+                </h3>
+                <ul className="space-y-2">
+                  {aboutContent.clientPartnerships.bullets.map((bullet, idx) => (
+                    <li key={idx} className="flex items-start gap-3 text-sm leading-relaxed">
+                      <span className="mt-1.5 w-1.5 h-1.5 bg-[var(--foreground)] rounded-full flex-shrink-0" />
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         );
